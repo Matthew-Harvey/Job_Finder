@@ -28,8 +28,8 @@ class both:
             tab0 = ttk.Frame(tabcontrol)
             tabcontrol.add(tab0, text="HOME")
             tabcontrol.select(tab0)
-            UNIBUTTON = HoverButton(tab0, height = 10, width = 30 , activebackground='black', fg="white", bg="red", text="UNIVERSITY", command = lambda: [both.closetab(tab0), uni.unimenu()]).grid(row=1)
-            JOBBUTTON = HoverButton(tab0, height = 10, width = 30 , activebackground='black', fg="white", bg="blue", text="FIND JOBS", command = lambda: [both.closetab(tab0), job.mainmenu()]).grid(row=1, column=1)
+            HoverButton(tab0, height = 10, width = 30 , activebackground='black', fg="white", bg="red", text="UNIVERSITY", command = lambda: [both.closetab(tab0), uni.unimenu()]).grid(row=1)
+            HoverButton(tab0, height = 10, width = 30 , activebackground='black', fg="white", bg="blue", text="FIND JOBS", command = lambda: [both.closetab(tab0), job.mainmenu()]).grid(row=1, column=1)
 
     def closetab(self, result_tab):
             result_tab.destroy()
@@ -55,13 +55,11 @@ class both:
         cursor.execute("SELECT USERS.USERID FROM USERS")
         ids = cursor.fetchall()
         handle.commit()
-        z = 0
         idsclean = []
         for x in range(0, len(ids)):
-            a = str(ids[z])
+            a = str(ids[x])
             b = a.strip('(),/\'')
             idsclean.append(b)
-            z = z+1
         ids = idsclean
         i = 0
         k = 0
@@ -73,7 +71,7 @@ class both:
                 PINrecieved = PINrecieved[0]
                 PINrecieved = str(PINrecieved)
                 PINrecieved = PINrecieved.strip("/'(),'")
-                TrueorFalse = verify_password(PINrecieved, PIN_insert)
+                TrueorFalse = both.verify_password(PINrecieved, PIN_insert)
                 if TrueorFalse == True:
                     both.changelogin(tab1, IDENT_insert, PIN_insert, uniorjob)
                     k = 8
@@ -84,8 +82,8 @@ class both:
         if k != 8:
             errorlogin = ttk.Frame(tabcontrol)
             tabcontrol.add(errorlogin, text="INVALID")
-            incorrect = tk.Label(errorlogin, text="ID or Password is incorrect", font="Ariel 15 bold italic", fg="blue").grid(row=1)
-            backtomain = HoverButton(errorlogin, text="Back to Main Menu", activebackground='blue', fg="white", bg="black", command= lambda: [both.closetab(errorlogin), job.mainmenu()]).grid(row=2)
+            tk.Label(errorlogin, text="ID or Password is incorrect", font="Ariel 15 bold italic", fg="blue").grid(row=1)
+            HoverButton(errorlogin, text="Back to Main Menu", activebackground='blue', fg="white", bg="black", command= lambda: [both.closetab(errorlogin), job.mainmenu()]).grid(row=2)
             
     def changelogin(self, tab1, IDENT_insert, PIN_insert, uniorjob):
         tab1.destroy()
@@ -94,11 +92,11 @@ class both:
         tabcontrol.add(tab4, text="Step 2")
         tabcontrol.select(tab4)
         ID_insert = IDENT_insert
-        change = HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="edit your data", command = lambda: changingdata(ID_insert, PIN_insert, tab4, uniorjob)).grid(row=1)
+        HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="edit your data", command = lambda: both.changingdata(ID_insert, PIN_insert, tab4, uniorjob)).grid(row=1)
         if uniorjob == False:
-            cont = HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Find Personalised Reccomendations", command = lambda: job.fieldq(ID_insert, tab4)).grid(row=2)
+            HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Find Personalised Reccomendations", command = lambda: job.fieldq(ID_insert, tab4)).grid(row=2)
         elif uniorjob == True:
-            cont = HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Find Personalised Reccomendations", command = lambda: uni.uni_quals(ID_insert, tab4)).grid(row=2)
+            HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Find Personalised Reccomendations", command = lambda: uni.uni_quals(ID_insert, tab4)).grid(row=2)
 
     def changingdata(self, ID_insert, PIN_insert, tab4, uniorjob):
         tab4.destroy()
@@ -119,15 +117,15 @@ class both:
                 if e not in punctuation:
                     user_info += e
         user_info = user_info.split(",")
-        identlabel = tk.Label(tab4, text="Name:").grid(row=1)
+        tk.Label(tab4, text="Name:").grid(row=1)
         ident = tk.Entry(tab4)
         ident.insert(0,user_info[1])
         ident.grid(row=1, column=1)
-        quallabel = tk.Label(tab4, text="Qual:").grid(row=2)
+        tk.Label(tab4, text="Qual:").grid(row=2)
         qual = tk.Entry(tab4)
         qual.insert(0,user_info[2])
         qual.grid(row=2, column=1)
-        skilllabel = tk.Label(tab4, text="SKILL:").grid(row=3)
+        tk.Label(tab4, text="SKILL:").grid(row=3)
         skilldoc = open("keyskills.txt")
         skill_list = []
         read = "/n"
@@ -144,17 +142,14 @@ class both:
         varb.set(user_info[4])
         varc = StringVar()
         varc.set(user_info[5])
-        skillopt1 = OptionMenu(tab4 , vara, *skill_list)
-        skillopt1.grid(row=3, column=1)
-        skillopt2 = OptionMenu(tab4 , varb, *skill_list)
-        skillopt2.grid(row=3, column=2)
-        skillopt3 = OptionMenu(tab4 , varc, *skill_list)
-        skillopt3.grid(row=3, column=3)
-        currlabel = tk.Label(tab4, text="Current Job:").grid(row=4)
+        OptionMenu(tab4 , vara, *skill_list).grid(row=3, column=1)
+        OptionMenu(tab4 , varb, *skill_list).grid(row=3, column=2)
+        OptionMenu(tab4 , varc, *skill_list).grid(row=3, column=3)
+        tk.Label(tab4, text="Current Job:").grid(row=4)
         current = tk.Entry(tab4)
         current.insert(0,user_info[6])
         current.grid(row=4, column=1)
-        continuebutton = HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Commit Changes", command = lambda: both.updatechanges(vara, varb, varc, qual, ID_insert, PIN_insert, ident, current, tab4, uniorjob)).grid(row=5)
+        HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Commit Changes", command = lambda: both.updatechanges(vara, varb, varc, qual, ID_insert, PIN_insert, ident, current, tab4, uniorjob)).grid(row=5)
 
     def updatechanges(self, vara, varb, varc, qual, ID_insert, PIN_insert, ident, current, tab4, uniorjob):
         skill1 = vara.get()
@@ -203,10 +198,10 @@ class both:
             tab4 = ttk.Frame(tabcontrol)
             tabcontrol.add(tab4, text="REMEMBER THIS")
             tabcontrol.select(tab4)
-            infotoremember = tk.Label(tab4, text="Remember these to login in next time to avoid re-completing the questions")
-            IDprovide = tk.Label(tab4, text="ID:")
-            ID2provide = tk.Label(tab4, text=ID_insert)
-            PINprovide = tk.Label(tab4, text="Password:")
+            tk.Label(tab4, text="Remember these to login in next time to avoid re-completing the questions").grid(row=1)
+            tk.Label(tab4, text="ID:").grid(row=2)
+            tk.Label(tab4, text=ID_insert).grid(row=2, column=1)
+            tk.Label(tab4, text="Password:").grid(row=3)
             counted = 0
             for char in Password_insert:
                 if char == "_":
@@ -215,17 +210,11 @@ class both:
                 counted = str(counted)
                 Password_insert = str(Password_insert)
                 Password_insert = Password_insert + " with " + counted + " underscores."
-            PIN2provide = tk.Label(tab4, text=Password_insert)
+            tk.Label(tab4, text=Password_insert).grid(row=3, column=1)
             if uniorjob == False:
-                button = HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Let's answer some questions", command= lambda: job.fieldq(ID_insert, tab4))
+                HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Let's answer some questions", command= lambda: job.fieldq(ID_insert, tab4)).grid(row=4, column=1)
             elif uniorjob == True:
-                button = HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Let's answer some questions", command= lambda: uni.uni_quals(ID_insert, tab4))
-            infotoremember.grid(row=1)
-            IDprovide.grid(row=2)
-            ID2provide.grid(row=2, column=1)
-            PINprovide.grid(row=3)
-            PIN2provide.grid(row=3, column=1)
-            button.grid(row=4, column=1)
+                HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Let's answer some questions", command= lambda: uni.uni_quals(ID_insert, tab4)).grid(row=4, column=1)
 
     def user1(self, IDentry, tab1, uniorjob):
         choices = ["< High School Diploma", "High School Diploma", "Master", "Bachelor", "Associate", "Some College", "Doctoral Degree", "Vocational Certificate"]
@@ -254,20 +243,19 @@ class both:
                     error = ttk.Frame(tabcontrol)
                     tabcontrol.add(error, text="Id taken")
                     tabcontrol.select(error)
-                    labelerror = tk.Label(error, text="ID is already taken...").grid(row=1)
-                    continuebutton = HoverButton(error, activebackground='blue', fg="white", bg="black", text="Back to Main Menu", command = lambda: [closetab(error), mainmenu()]).grid(row=2)
+                    tk.Label(error, text="ID is already taken...").grid(row=1)
+                    HoverButton(error, activebackground='blue', fg="white", bg="black", text="Back to Main Menu", command = lambda: [closetab(error), mainmenu()]).grid(row=2)
         if z == False:
             tab6 = ttk.Frame(tabcontrol)
             tabcontrol.add(tab6, text="CREATE USER")
             tabcontrol.select(tab6)
-            nameenter = tk.Label(tab6, text="NAME: ").grid(row=1)
+            tk.Label(tab6, text="NAME: ").grid(row=1)
             nameentry = tk.Entry(tab6)
             nameentry.grid(row=1, column=1)
             tkvar = StringVar()
             tkvar.set(choices[random.randint(0, len(choices)-1)])
-            quallevel = tk.Label(tab6, text="CHOOSE HIGHEST QULAIFICATION LEVEL ACHIEVED:").grid(row=2)
-            quallevelopt = tk.OptionMenu(tab6 , tkvar, *choices)
-            quallevelopt.grid(row=2, column=1)
+            tk.Label(tab6, text="CHOOSE HIGHEST QULAIFICATION LEVEL ACHIEVED:").grid(row=2)
+            tk.OptionMenu(tab6 , tkvar, *choices).grid(row=2, column=1)
             skilldoc = open("keyskills.txt")
             skill_list = []
             read = "/n"
@@ -289,21 +277,18 @@ class both:
             advar = StringVar()
             set3 = skill_list_temp[random.randint(0, len(skill_list_temp)-1)]
             advar.set(set3)
-            keyskillenter = Label(tab6, text="MOST APPLICABLE SKILLS FOR YOU:").grid(row=3)
-            keyskillopt1 = OptionMenu(tab6 , abvar, *skill_list)
-            keyskillopt1.grid(row=3, column=1)
-            keyskillopt2 = OptionMenu(tab6 , acvar, *skill_list)
-            keyskillopt2.grid(row=3, column=2)
-            keyskillopt3 = OptionMenu(tab6 , advar, *skill_list)
-            keyskillopt3.grid(row=3, column=3)
-            currententer = tk.Label(tab6, text="CURRENT JOB (N IF NO JOB): ").grid(row=4)
+            tk.Label(tab6, text="MOST APPLICABLE SKILLS FOR YOU:").grid(row=3)
+            OptionMenu(tab6 , abvar, *skill_list).grid(row=3, column=1)
+            OptionMenu(tab6 , acvar, *skill_list).grid(row=3, column=2)
+            OptionMenu(tab6 , advar, *skill_list).grid(row=3, column=3)
+            tk.Label(tab6, text="CURRENT JOB (N IF NO JOB): ").grid(row=4)
             currententry = tk.Entry(tab6)
             currententry.grid(row=4, column=1)
-            Passwordenter = tk.Label(tab6, text="Password: ").grid(row=5)
+            tk.Label(tab6, text="Password: ").grid(row=5)
             Password = tk.Entry(tab6)
             Password.grid(row=5, column=1)
             tab1 = ttk.Frame(tabcontrol)
-            button = HoverButton(tab6, activebackground='blue', fg="white", bg="black", text="ENTER", command= lambda: both.loguser(ID_insert, tab6, nameentry, tkvar, abvar, acvar, advar, currententry, Password, IDentry, tab1, choices, uniorjob)).grid(row=5, column=2)
+            HoverButton(tab6, activebackground='blue', fg="white", bg="black", text="ENTER", command= lambda: both.loguser(ID_insert, tab6, nameentry, tkvar, abvar, acvar, advar, currententry, Password, IDentry, tab1, choices, uniorjob)).grid(row=5, column=2)
 
 
 class uni:
@@ -313,18 +298,18 @@ class uni:
         tab0 = ttk.Frame(tabcontrol)
         tabcontrol.add(tab0, text="Uni Menu")
         tabcontrol.select(tab0)
-        UniTitle = tk.Label(tab0, fg="red", text="University Research Tool", font="Ariel 18").grid(row=2+1, columnspan=3)
-        gaps = tk.Label(tab0, text=" ").grid(row=3+1)
-        overallrank = HoverButton(tab0, activebackground='red', fg="white", bg="black", text="Overall Rankings", command = lambda: [both.closetab(tab0), uni.overallranking()]).grid(row=4+1)
-        gap = tk.Label(tab0, text=" ").grid(row=5+1)
-        searchuni = tk.Label(tab0, text= "SEARCH UNI:", font= "Ariel 15 bold italic", fg="Black").grid(row=6+1, column=1)
+        tk.Label(tab0, fg="red", text="University Research Tool", font="Ariel 18").grid(row=2+1, columnspan=3)
+        tk.Label(tab0, text=" ").grid(row=3+1)
+        HoverButton(tab0, activebackground='red', fg="white", bg="black", text="Overall Rankings", command = lambda: [both.closetab(tab0), uni.overallranking()]).grid(row=4+1)
+        tk.Label(tab0, text=" ").grid(row=5+1)
+        tk.Label(tab0, text= "SEARCH UNI:", font= "Ariel 15 bold italic", fg="Black").grid(row=6+1, column=1)
         entrybox = tk.Entry(tab0)
         entrybox.insert(END, "University Name")
         entrybox.grid(row=7+1, column=1)
-        enterbutton__ = HoverButton(tab0, activebackground='red', fg="white", bg="black", text="ENTER", command = lambda: uni.searchbyuni(entrybox, tab0)).grid(row=8+1, column=1)
-        seearchingsubject = HoverButton(tab0, activebackground='red', fg="white", bg="black", text="Rank search by subject", command = lambda: [both.closetab(tab0), uni.searchbysub()]).grid(row=4+1, column=2)
-        gap = tk.Label(tab0, text=" ").grid(row=9+1)
-        loginlabel = tk.Label(tab0, text="LOGIN:", font="Ariel 15 bold italic", fg="red").grid(row=10+1, column=1)
+        HoverButton(tab0, activebackground='red', fg="white", bg="black", text="ENTER", command = lambda: uni.searchbyuni(entrybox, tab0)).grid(row=8+1, column=1)
+        HoverButton(tab0, activebackground='red', fg="white", bg="black", text="Rank search by subject", command = lambda: [both.closetab(tab0), uni.searchbysub()]).grid(row=4+1, column=2)
+        tk.Label(tab0, text=" ").grid(row=9+1)
+        tk.Label(tab0, text="LOGIN:", font="Ariel 15 bold italic", fg="red").grid(row=10+1, column=1)
         IDENTentry = tk.Entry(tab0)
         IDENTentry.insert(END, "ID")
         IDENTentry.grid(row=11+1, column=1)
@@ -332,38 +317,38 @@ class uni:
         Passwordentry.insert(END, "Password")
         Passwordentry.grid(row=12+1, column=1)
         #resetpin = tk.Button(tab1, text="FORGOT PIN", command = lambda: reset()).grid(row=7, column=3)
-        loginbutton = HoverButton(tab0, activebackground='red', fg="white", bg="red", text="ENTER", command= lambda: both.login(attempts, tab0, IDENTentry, Passwordentry, uniorjob)).grid(row=13+1, column=1)
-        hold__ = tk.Label(tab0, text=" ").grid(row=14+1)
-        usernew = tk.Label(tab0, text="NEW USER:", font="Ariel 15 bold italic", fg="red").grid(row=15+1, column=1)
+        HoverButton(tab0, activebackground='red', fg="white", bg="red", text="ENTER", command= lambda: both.login(attempts, tab0, IDENTentry, Passwordentry, uniorjob)).grid(row=13+1, column=1)
+        tk.Label(tab0, text=" ").grid(row=14+1)
+        tk.Label(tab0, text="NEW USER:", font="Ariel 15 bold italic", fg="red").grid(row=15+1, column=1)
         IDentry = tk.Entry(tab0)
         IDentry.insert(END, "ID")
         IDentry.grid(row=19+1, column=1)
-        buttonconfirm = HoverButton(tab0, activebackground='black', fg="white", bg="red", text="ENTER", command = lambda: both.user1(IDentry, tab0, uniorjob)).grid(row=20+1, column=1)
-        gap = tk.Label(tab0, text = " ").grid(row=25+1)
-        backtohome = HoverButton(tab0, activebackground='black', fg="white", bg="blue", text="Home", command = lambda: [both.closetab(tab0), both.home()]).grid(row=26+1, column=1)
+        HoverButton(tab0, activebackground='black', fg="white", bg="red", text="ENTER", command = lambda: both.user1(IDentry, tab0, uniorjob)).grid(row=20+1, column=1)
+        tk.Label(tab0, text = " ").grid(row=25+1)
+        HoverButton(tab0, activebackground='black', fg="white", bg="blue", text="Home", command = lambda: [both.closetab(tab0), both.home()]).grid(row=26+1, column=1)
 
     def uni_quals(self, ID_insert, tab4):
         both.closetab(tab4)
         tab0 = ttk.Frame(tabcontrol)
         tabcontrol.add(tab0, text="Enter Grades")
         tabcontrol.select(tab0)
-        alevel_label = tk.Label(tab0, text= "Total UCAS points = ").grid(row=1)
+        tk.Label(tab0, text= "Total UCAS points = ").grid(row=1)
         digit3 = IntVar()
         digit3.set("1")
         zero_to_nine = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        digit3opt = OptionMenu(tab0, digit3, *zero_to_nine).grid(row=1, column=2)
+        OptionMenu(tab0, digit3, *zero_to_nine).grid(row=1, column=2)
         digit2 = IntVar()
         digit2.set("5")
-        digit2opt = OptionMenu(tab0, digit2, *zero_to_nine).grid(row=1, column=3)
+        OptionMenu(tab0, digit2, *zero_to_nine).grid(row=1, column=3)
         digit1 = IntVar()
         digit1.set("0")
-        digit1opt = OptionMenu(tab0, digit1, *zero_to_nine).grid(row=1, column=4)
+        OptionMenu(tab0, digit1, *zero_to_nine).grid(row=1, column=4)
         arts_var = StringVar()
         yesno = ["Yes", "No"]
         arts_var.set(yesno[1])
-        artsopt = OptionMenu(tab0, arts_var, *yesno).grid(row=2, column=2)
-        artslabel = tk.Label(tab0, text = "Are you interested in studying arts, drama or music related cources?").grid(row=2, column=1)
-        enterpoints = HoverButton(tab0, activebackground='black', fg="white", bg="blue", text="ENTER", command = lambda: uni.calculate_uni(ID_insert, digit3, digit2, digit1, tab0, arts_var)).grid(row=3, column=4)
+        OptionMenu(tab0, arts_var, *yesno).grid(row=2, column=2)
+        tk.Label(tab0, text = "Are you interested in studying arts, drama or music related cources?").grid(row=2, column=1)
+        HoverButton(tab0, activebackground='black', fg="white", bg="blue", text="ENTER", command = lambda: uni.calculate_uni(ID_insert, digit3, digit2, digit1, tab0, arts_var)).grid(row=3, column=4)
         
     def calculate_uni(self, ID_insert, digit1, digit2, digit3, tab0, arts_var):
         digit1 = digit1.get()
@@ -461,7 +446,7 @@ class uni:
         tabres = ttk.Frame(tabcontrol)
         tabcontrol.add(tabres, text="Rankings For Universities")
         tabcontrol.select(tabres)
-        label = tk.Label(tabres, text="Overall Rankings").grid(row=1)
+        tk.Label(tabres, text="Overall Rankings").grid(row=1)
         count = 1
         if len(name) > 40:
             while len(name)> 40:
@@ -470,13 +455,13 @@ class uni:
             count = str(count)
             string = count+". "+name[v]
             count = int(count)
-            label = tk.Label(tabres, text=string).grid(row=count+1)
+            tk.Label(tabres, text=string).grid(row=count+1)
             count = count+1
-        back = HoverButton(tabres, activebackground='black', fg="white", bg="red", text="Menu", command = lambda: [both.closetab(tabres), uni.unimenu()]).grid(row=count+2, column=1)
+        HoverButton(tabres, activebackground='black', fg="white", bg="red", text="Menu", command = lambda: [both.closetab(tabres), uni.unimenu()]).grid(row=count+2, column=1)
 
     def searchbyuni(self, entrybox, tab0):
         entrybox = entrybox.get()
-        closetab(tab0)
+        both.closetab(tab0)
         f = open("NamesOfUnis.txt")
         subjects = []
         try:
@@ -505,7 +490,7 @@ class uni:
             repeatlist.append(repeats)
         repeatlist.sort()
         highestrepeat = repeatlist[len(repeatlist)-1]
-        uni =[]
+        unis =[]
         for l in range(0, len(all_names)):
             repeats = 0
             for p in range(0, len(all_names[l])):
@@ -516,12 +501,12 @@ class uni:
                 except:
                     cont=True
             if repeats == highestrepeat:
-                uni.append(all_names[l])
-        if len(uni) > 3:
-            while len(uni) > 3:
-                uni.remove(uni[len(uni)-1])
+                unis.append(all_names[l])
+        if len(unis) > 3:
+            while len(unis) > 3:
+                unis.remove(unis[len(unis)-1])
         for r in range(0, len(uni)):
-            uniname = uni[r]
+            uniname = unis[r]
             uni.display_uni(uniname)
             
     def display_uni(self, uniname):
@@ -549,12 +534,12 @@ class uni:
         unitab = ttk.Frame(tabcontrol)
         tabcontrol.add(unitab, text=name)
         tabcontrol.select(unitab)
-        university_name = tk.Label(unitab, fg="red", text=name, font="Ariel 17 italic").grid(row=2, columnspan=3)
-        pointlabel = tk.Label(unitab, fg="black", text=points, font="Ariel 12 italic").grid(row=4, column=1)
-        ranklabel = tk.Label(unitab, fg="black", text=ranks, font="Ariel 10 italic").grid(row=3, column=1)
-        similarlabel = HoverButton(unitab, activebackground='red', fg="white", bg="black", text="Similar Universities", command = lambda: uni.similar_uni(name, pointint, unitab)).grid(row=5, column=1)
-        back = HoverButton(unitab, activebackground='black', fg="white", bg="red", text="Menu", command = lambda: uni.unimenu()).grid(row=8, column=1)
-        close = HoverButton(unitab, activebackground='black', fg="white", bg="red", text="Close Tab", command = lambda: [both.closetab(unitab)]).grid(row=9, column=1)
+        tk.Label(unitab, fg="red", text=name, font="Ariel 17 italic").grid(row=2, columnspan=3)
+        tk.Label(unitab, fg="black", text=points, font="Ariel 12 italic").grid(row=4, column=1)
+        tk.Label(unitab, fg="black", text=ranks, font="Ariel 10 italic").grid(row=3, column=1)
+        HoverButton(unitab, activebackground='red', fg="white", bg="black", text="Similar Universities", command = lambda: uni.similar_uni(name, pointint, unitab)).grid(row=5, column=1)
+        HoverButton(unitab, activebackground='black', fg="white", bg="red", text="Menu", command = lambda: uni.unimenu()).grid(row=8, column=1)
+        HoverButton(unitab, activebackground='black', fg="white", bg="red", text="Close Tab", command = lambda: [both.closetab(unitab)]).grid(row=9, column=1)
 
     def similar_uni(self, name, pointint, unitab):
         tab39 = ttk.Frame(tabcontrol)
@@ -582,13 +567,13 @@ class uni:
                     names = names[1:len(names)-1]
                 similar.append(names)
         if similar == []:
-            similarlabel = tk.Label(tab39, text="No Similar Universities.").grid(row=5, column=1)
+            tk.Label(tab39, text="No Similar Universities.").grid(row=5, column=1)
         else:
             variable = StringVar()
             variable.set(similar[random.randint(0, len(similar)-1)])
-            similarmenu = OptionMenu(tab39, variable, *similar).grid(row=5, column=1)
-            enter_button = HoverButton(tab39, activebackground='black', fg="white", bg="red", text="ENTER", command = lambda: uni.continue_similar_uni(variable, name, tab39)).grid(row=6, column=1)
-        back = HoverButton(tab39, activebackground='black', fg="white", bg="red", text="Back", command = lambda: both.closetab(tab39)).grid(row=8, column=1)
+            OptionMenu(tab39, variable, *similar).grid(row=5, column=1)
+            HoverButton(tab39, activebackground='black', fg="white", bg="red", text="ENTER", command = lambda: uni.continue_similar_uni(variable, name, tab39)).grid(row=6, column=1)
+        HoverButton(tab39, activebackground='black', fg="white", bg="red", text="Back", command = lambda: both.closetab(tab39)).grid(row=8, column=1)
 
     def continue_similar_uni(self, variable, name, tab39):
         tab39.destroy()
@@ -610,9 +595,9 @@ class uni:
             subjects[i] = subjects[i][:len(subjects[i])-1]
         opt = StringVar()
         opt.set(subjects[random.randint(0, len(subjects)-1)])
-        optionofsub = OptionMenu(tab0, opt, *subjects).grid(row=1, column=1)
-        EnterData = HoverButton(tab0, activebackground="Black", fg="White", bg="Red", text="Enter", command = lambda: [uni.displaysubjectsearch(opt), both.closetab(tab0)]).grid(row=2, column=1)
-        back = HoverButton(tab0, activebackground='black', fg="white", bg="red", text="Menu", command = lambda: [both.closetab(tab0), uni.unimenu()]).grid(row=4)
+        OptionMenu(tab0, opt, *subjects).grid(row=1, column=1)
+        HoverButton(tab0, activebackground="Black", fg="White", bg="Red", text="Enter", command = lambda: [uni.displaysubjectsearch(opt), both.closetab(tab0)]).grid(row=2, column=1)
+        HoverButton(tab0, activebackground='black', fg="white", bg="red", text="Menu", command = lambda: [both.closetab(tab0), uni.unimenu()]).grid(row=4)
 
     def displaysubjectsearch(self, opt):
         opt = opt.get()
@@ -638,7 +623,7 @@ class uni:
         tabres = ttk.Frame(tabcontrol)
         tabcontrol.add(tabres, text="Rankings For Subject")
         tabcontrol.select(tabres)
-        label = tk.Label(tabres, text=subjectname).grid(row=1)
+        tk.Label(tabres, text=subjectname).grid(row=1)
         count = 1
         if len(name) > 25:
             while len(name)> 25:
@@ -647,9 +632,9 @@ class uni:
             count = str(count)
             string = count+". "+name[v]
             count = int(count)
-            label = tk.Label(tabres, text=string).grid(row=count+1)
+            tk.Label(tabres, text=string).grid(row=count+1)
             count = count+1
-        back = HoverButton(tabres, activebackground='black', fg="white", bg="red", text="Menu", command = lambda: [both.closetab(tabres), uni.unimenu()]).grid(row=count+2, column=1)
+        HoverButton(tabres, activebackground='black', fg="white", bg="red", text="Menu", command = lambda: [both.closetab(tabres), uni.unimenu()]).grid(row=count+2, column=1)
     
     def getucaspoints(self):
         f = open("NamesOfUnis.txt")
@@ -707,19 +692,19 @@ class job:
         tabcontrol.add(tab1, text="Jobs")
         tabcontrol.select(tab1)
         attempts = 0
-        hold = tk.Label(tab1, text="Job Research Tool", font= "Ariel 18", fg="blue").grid(row=2+1, columnspan=3)
-        gap = tk.Label(tab1, text=" ").grid(row=3+1)
-        popularjobs = HoverButton(tab1, activebackground='blue', fg="white", bg="black", text = "POPULAR JOBS", command = lambda: job.popular(tab1)).grid(row=4+1)
-        highrated = HoverButton(tab1, activebackground='blue', fg="white", bg="black", text = "HIGHLY RATED", command = lambda: job.rating(tab1)).grid(row=4+1, column=1)
-        fieldjobs = HoverButton(tab1, activebackground='blue', fg="white", bg="black", text = "SEARCH FIELDS", command = lambda: job.fieldstart(tab1)).grid(row=4+1, column=2)
-        hold_ = tk.Label(tab1, text=" ").grid(row=5+1)
-        searchjobs = tk.Label(tab1, text="SEARCH JOBS:", font="Ariel 15 bold italic", fg="black").grid(row=6+1, columnspan=3)
+        tk.Label(tab1, text="Job Research Tool", font= "Ariel 18", fg="blue").grid(row=2+1, columnspan=3)
+        tk.Label(tab1, text=" ").grid(row=3+1)
+        HoverButton(tab1, activebackground='blue', fg="white", bg="black", text = "POPULAR JOBS", command = lambda: job.popular(tab1)).grid(row=4+1)
+        HoverButton(tab1, activebackground='blue', fg="white", bg="black", text = "HIGHLY RATED", command = lambda: job.rating(tab1)).grid(row=4+1, column=1)
+        HoverButton(tab1, activebackground='blue', fg="white", bg="black", text = "SEARCH FIELDS", command = lambda: job.fieldstart(tab1)).grid(row=4+1, column=2)
+        tk.Label(tab1, text=" ").grid(row=5+1)
+        tk.Label(tab1, text="SEARCH JOBS:", font="Ariel 15 bold italic", fg="black").grid(row=6+1, columnspan=3)
         searchjobentry = tk.Entry(tab1)
         searchjobentry.insert(END, "Job Title")
         searchjobentry.grid(row=7+1, column=1)
-        entersearch = HoverButton(tab1, activebackground='blue', fg="white", bg="black", text="ENTER", command= lambda: job.search(searchjobentry, tab1)).grid(row=8+1, column=1)
-        hold___ = tk.Label(tab1, text=" ").grid(row=9+1)
-        loginlabel = tk.Label(tab1, text="LOGIN:", font="Ariel 15 bold italic", fg="blue").grid(row=10+1, columnspan=3)
+        HoverButton(tab1, activebackground='blue', fg="white", bg="black", text="ENTER", command= lambda: job.search(searchjobentry, tab1)).grid(row=8+1, column=1)
+        tk.Label(tab1, text=" ").grid(row=9+1)
+        tk.Label(tab1, text="LOGIN:", font="Ariel 15 bold italic", fg="blue").grid(row=10+1, columnspan=3)
         IDENTentry = tk.Entry(tab1)
         IDENTentry.insert(END, "ID")
         IDENTentry.grid(row=11+1, column=1)
@@ -727,15 +712,15 @@ class job:
         Passwordentry.insert(END, "Password")
         Passwordentry.grid(row=12+1, column=1)
         #resetpin = tk.Button(tab1, text="FORGOT PIN", command = lambda: reset()).grid(row=7, column=3)
-        loginbutton = HoverButton(tab1, activebackground='black', fg="white", bg="blue", text="ENTER", command= lambda: both.login(attempts, tab1, IDENTentry, Passwordentry, uniorjob)).grid(row=13+1, column=1)
-        hold__ = tk.Label(tab1, text=" ").grid(row=14+1)
-        usernew = tk.Label(tab1, text="NEW USER:", font="Ariel 15 bold italic", fg="blue").grid(row=15+1, columnspan=3)
+        HoverButton(tab1, activebackground='black', fg="white", bg="blue", text="ENTER", command= lambda: both.login(attempts, tab1, IDENTentry, Passwordentry, uniorjob)).grid(row=13+1, column=1)
+        tk.Label(tab1, text=" ").grid(row=14+1)
+        tk.Label(tab1, text="NEW USER:", font="Ariel 15 bold italic", fg="blue").grid(row=15+1, columnspan=3)
         IDentry = tk.Entry(tab1)
         IDentry.insert(END, "ID")
         IDentry.grid(row=19+1, column=1)
-        buttonconfirm = HoverButton(tab1, activebackground='black', fg="white", bg="blue", text="ENTER", command = lambda: both.user1(IDentry, tab1, uniorjob)).grid(row=20+1, column=1)
-        gap = tk.Label(tab1, text=" ").grid(row=21+1)
-        backtohome = HoverButton(tab1, activebackground='black', fg="white", bg="red", text="Home", command = lambda: [both.closetab(tab1), both.home()]).grid(row=22+1, column=1)
+        HoverButton(tab1, activebackground='black', fg="white", bg="blue", text="ENTER", command = lambda: both.user1(IDentry, tab1, uniorjob)).grid(row=20+1, column=1)
+        tk.Label(tab1, text=" ").grid(row=21+1)
+        HoverButton(tab1, activebackground='black', fg="white", bg="red", text="Home", command = lambda: [both.closetab(tab1), both.home()]).grid(row=22+1, column=1)
     
     def fieldq(self, ID_insert, tab4):
         tab4.destroy()
@@ -750,38 +735,36 @@ class job:
         countofiterations = 0
         recordchoices = []
         var1 = IntVar()
-        label = tk.Label(tab3, text=" ").grid(row=1, column=1)
-        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)
+        tk.Label(tab3, text=" ").grid(row=1, column=1)
+        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)
 
-    def recurfield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1, label):
+    def recurfield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1):
         if countofiterations == 0:
-            intro = tk.Label(tab3, text="Choose a proirity of each field so recommendation can be more appropriate.").grid(row=1)
+            tk.Label(tab3, text="Choose a proirity of each field so recommendation can be more appropriate.").grid(row=1)
         else:
             var1=var1.get()
             recordchoices.append(var1)
-            label.destroy()
         if countofiterations == len(fields):
             job.updatefields(ID_insert, recordchoices, fields, tab3)
         try:
-            label = tk.Label(tab3, text=fields[countofiterations])
-            label.grid(row=2)
-            progress = tk.Label(tab3, text=str(countofiterations)+"/"+str(len(fields)-1)).grid(row=2, column=1)
+            tk.Label(tab3, text=fields[countofiterations]).grid(row=2)
+            tk.Label(tab3, text=str(countofiterations)+"/"+str(len(fields)-1)).grid(row=2, column=1)
             countofiterations=countofiterations+1
             var1 = IntVar()
-            radio1 = tk.Radiobutton(tab3, text="Very Interested", value=5, variable=var1).grid(row=3)
-            radio2 = tk.Radiobutton(tab3, text="Interested", value=4, variable=var1).grid(row=4)
-            radio3 = tk.Radiobutton(tab3, text="Neutral", value=3, variable=var1).grid(row=5)
-            radio4 = tk.Radiobutton(tab3, text="Not Interested", value=2, variable=var1).grid(row=6)
-            radio5 = tk.Radiobutton(tab3, text="Avoid", value=1, variable=var1).grid(row=7)
-            nextbutton = HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="NEXT FIELD", command= lambda: job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)).grid(row=8)
-            skipbutton = HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="SKIP ALL", command= lambda: job.Increasefield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)).grid(row=8, column=2)
+            tk.Radiobutton(tab3, text="Very Interested", value=5, variable=var1).grid(row=3)
+            tk.Radiobutton(tab3, text="Interested", value=4, variable=var1).grid(row=4)
+            tk.Radiobutton(tab3, text="Neutral", value=3, variable=var1).grid(row=5)
+            tk.Radiobutton(tab3, text="Not Interested", value=2, variable=var1).grid(row=6)
+            tk.Radiobutton(tab3, text="Avoid", value=1, variable=var1).grid(row=7)
+            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="NEXT FIELD", command= lambda: job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)).grid(row=8)
+            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="SKIP ALL", command= lambda: job.Increasefield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)).grid(row=8, column=2)
         except:
             hold = 0
 
-    def Increasefield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1, label):
+    def Increasefield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1):
         while countofiterations < 16:
             countofiterations=countofiterations+1
-        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)
+        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)
 
     def updatefields(self, ID_insert, recordchoices, fields, tab3):
         recordchoices.reverse()
@@ -876,7 +859,7 @@ class job:
                 cursor.execute("INSERT INTO RECOMMEND VALUES(?,?)", (jobid, ID_insert))
                 handle.commit()
                 handle.close()
-                job.display(job_list[0])
+                job.display(joblist[0])
 
     def findcommonqual(self, qualforjob):
         qualforjob = str(qualforjob)
@@ -921,8 +904,8 @@ class job:
             worktab = ttk.Frame(tabcontrol)
             tabcontrol.add(worktab, text="WORK EXPERIENCE")
             tabcontrol.select(worktab)
-            workxplabel = tk.Label(worktab, text=" ").grid(row=1)
-            worklabel = tk.Label(worktab, text="Do you have any work experience in the following roles?").grid(row=2) 
+            tk.Label(worktab, text=" ").grid(row=1)
+            tk.Label(worktab, text="Do you have any work experience in the following roles?").grid(row=2) 
             optionsforwork = ["3+ years", "1-3 years", "< 1 year"]
             varnames = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
             namesofvariables = ["S"]*250
@@ -953,12 +936,11 @@ class job:
                 jobgiven = joblist[c] + " - Requires " + exp + " experience in similar positions."
                 varnames[c] = StringVar()
                 varnames[c].set(optionsforwork[2])
-                namesofvariables[c] = tk.Label(worktab, text=jobgiven).grid(row=c+3)
-                namesofvariables[c+2] = tk.Label(worktab, text="Your Level: ").grid(row=c+3, column=1)
-                namesofvariables[c+1] = OptionMenu(worktab , varnames[c], *optionsforwork)
-                namesofvariables[c+1].grid(row=c+3, column=2)
-            whatisworkexp = tk.Label(worktab, text="Work Experience * Includes Training that is job specific : The experience that a person already has of working, a period of time in which a student temporarily works for an employer to get experience.").grid(row=293)
-            finalise = HoverButton(worktab, activebackground='blue', fg="white", bg="black", text="Confirm", command= lambda: job.usingworkexp(varnames, joblist, worktab, ID_insert)).grid(row=294)
+                tk.Label(worktab, text=jobgiven).grid(row=c+3)
+                tk.Label(worktab, text="Your Level: ").grid(row=c+3, column=1)
+                OptionMenu(worktab , varnames[c], *optionsforwork).grid(row=c+3, column=2)
+            tk.Label(worktab, text="Work Experience * Includes Training that is job specific : The experience that a person already has of working, a period of time in which a student temporarily works for an employer to get experience.").grid(row=293)
+            HoverButton(worktab, activebackground='blue', fg="white", bg="black", text="Confirm", command= lambda: job.usingworkexp(varnames, joblist, worktab, ID_insert)).grid(row=294)
         else:
             joblist.remove(joblist[random.randint(0, len(joblist)-1)])
             job.workxp(joblist, ID_insert)
@@ -1143,7 +1125,7 @@ class job:
         rec_count = count
         rec_count = str(rec_count)
         rec_count = "Amount of suggestions: "+rec_count
-        counting = tk.Label(result_tab, text=rec_count, font= "Ariel 12 italic").grid(row=20, column=1)
+        tk.Label(result_tab, text=rec_count, font= "Ariel 12 italic").grid(row=20, column=1)
         cursor.execute("UPDATE JOBS SET COUNT = ? WHERE JOBNAME LIKE ? AND JOBID > ?", (count, "%"+job_name+"%", "0"))
         handle.commit()
         employees = str(employees)
@@ -1153,16 +1135,16 @@ class job:
             employees = employees[2:]
         if employees == "":
             employees = "uncounted quantity of"
-        jobname = tk.Label(result_tab, text=job_name, font= "Ariel 30", fg="blue").grid(row=2, columnspan=3)
-        joblabel = tk.Label(result_tab, text="Job:", font= "Ariel 20", fg="Dark Blue").grid(row=4)
-        joblabel2 = tk.Label(result_tab, text="Field:", font= "Ariel 20", fg="Dark Blue").grid(row=11)
-        joblabel3 = tk.Label(result_tab, text="Extras:", font= "Ariel 20", fg="Dark Blue").grid(row=15)
+        tk.Label(result_tab, text=job_name, font= "Ariel 30", fg="blue").grid(row=2, columnspan=3)
+        tk.Label(result_tab, text="Job:", font= "Ariel 20", fg="Dark Blue").grid(row=4)
+        tk.Label(result_tab, text="Field:", font= "Ariel 20", fg="Dark Blue").grid(row=11)
+        tk.Label(result_tab, text="Extras:", font= "Ariel 20", fg="Dark Blue").grid(row=15)
         breaktext = len(job_name)*"-"
-        break_ = tk.Label(result_tab, text=breaktext, font= "Ariel 30", fg="Light Blue").grid(row=3, columnspan=3)
-        break_ = tk.Label(result_tab, text=breaktext, font= "Ariel 30", fg="Light Blue").grid(row=1, columnspan=3)
+        tk.Label(result_tab, text=breaktext, font= "Ariel 30", fg="Light Blue").grid(row=3, columnspan=3)
+        tk.Label(result_tab, text=breaktext, font= "Ariel 30", fg="Light Blue").grid(row=1, columnspan=3)
         employees = str(employees)
         employees = employees+" people employed in this role."
-        jobemp = tk.Label(result_tab, text=employees, font= "Ariel 12 italic").grid(row=10, column=1)
+        tk.Label(result_tab, text=employees, font= "Ariel 12 italic").grid(row=10, column=1)
         cursor.execute("SELECT DESCRIPTION FROM JOBS WHERE JOBNAME LIKE ? AND JOBID > ?", ("%"+job_name+"%", "0"))
         descript = cursor.fetchall()
         handle.commit()
@@ -1189,8 +1171,8 @@ class job:
         salary = re.sub("[^0-9]", "", salary)
         number_hold = salary
         salary = "$"+salary
-        currencyupdate = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text=salary, command = lambda: job.currency(number_hold, result_tab, job_name, salary)).grid(row=6, column=1)
-        jobdes = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="DESCRIPTION", command = lambda: [job.displaydescript(descript, job_name), closetab(result_tab)]).grid(row=7, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text=salary, command = lambda: job.currency(number_hold, result_tab, job_name, salary)).grid(row=6, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="DESCRIPTION", command = lambda: [job.displaydescript(descript, job_name), closetab(result_tab)]).grid(row=7, column=1)
         cursor.execute("SELECT SKILLS FROM JOBS WHERE JOBNAME LIKE ? AND JOBID > ?", ("%"+job_name+"%", "0"))
         skill = cursor.fetchall()
         handle.commit()
@@ -1208,7 +1190,7 @@ class job:
         if skills[0] == "none,":
             none = True
         if none == False:
-            SKILL_ = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="SKILLS", command = lambda: job.displayskills(skills, var, job_name, result_tab)).grid(row=8, column=1)
+            HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="SKILLS", command = lambda: job.displayskills(skills, var, job_name, result_tab)).grid(row=8, column=1)
         cursor.execute("SELECT FIELD FROM JOBS WHERE JOBNAME LIKE ? AND JOBID > ?", ("%"+job_name+"%", "0"))
         field = cursor.fetchall()
         handle.commit()
@@ -1223,16 +1205,16 @@ class job:
                 field = field[1:len(field)-1]
         except:
             cont = True
-        fields_ = tk.Label(result_tab, text=field, font= "Ariel 12 italic").grid(row=12, column=1)
-        fieldinfo = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="Field Info", command = lambda: job.field_info(result_tab, field, job_name)).grid(row=13, column=1)
-        gap =  tk.Label(result_tab, text=" ", font= "Ariel 12 italic").grid(row=14, column=1)
-        searchlisting = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="SEARCH FOR LISTINGS", command = lambda: job.listingsearch(result_tab, job_name)).grid(row=16, column=1)
-        qualsbutton = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="Qual Split", command = lambda: job.qual_split(job_name)).grid(row=17, column=1)
-        TEMP_CV_button = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="Create recommendation file (PDF)", command = lambda: job.RECtemplate(job_name, result_tab, field, descript, skills, salary)).grid(row=18, column=1)
-        similarbutton = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="SIMILAR JOBS", command = lambda: job.similar_jobs(field, job_name, result_tab)).grid(row=19, column=1)
-        rating_button = HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="Rate this job", command = lambda: job.ratingadd(job_name, result_tab)).grid(row=21, column=1)
-        _button = HoverButton(result_tab, activebackground='Blue', fg="Blue", bg="White", text="MAIN MENU", command = lambda: job.mainmenu()).grid(row=25)
-        tab_button = HoverButton(result_tab, activebackground='Blue', fg="Blue", bg="White", text="CLOSE TAB", command = lambda: both.closetab(result_tab)).grid(row=27)
+        tk.Label(result_tab, text=field, font= "Ariel 12 italic").grid(row=12, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="Field Info", command = lambda: job.field_info(result_tab, field, job_name)).grid(row=13, column=1)
+        tk.Label(result_tab, text=" ", font= "Ariel 12 italic").grid(row=14, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="SEARCH FOR LISTINGS", command = lambda: job.listingsearch(result_tab, job_name)).grid(row=16, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="Qual Split", command = lambda: job.qual_split(job_name)).grid(row=17, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="Create recommendation file (PDF)", command = lambda: job.RECtemplate(job_name, result_tab, field, descript, skills, salary)).grid(row=18, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="SIMILAR JOBS", command = lambda: job.similar_jobs(field, job_name, result_tab)).grid(row=19, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="Rate this job", command = lambda: job.ratingadd(job_name, result_tab)).grid(row=21, column=1)
+        HoverButton(result_tab, activebackground='Blue', fg="Blue", bg="White", text="MAIN MENU", command = lambda: job.mainmenu()).grid(row=25)
+        HoverButton(result_tab, activebackground='Blue', fg="Blue", bg="White", text="CLOSE TAB", command = lambda: both.closetab(result_tab)).grid(row=27)
 
     def sim_users(self, job_name):
         similarusers = ttk.Frame(tabcontrol)
@@ -1293,11 +1275,11 @@ class job:
                 if all_non_duplicated_skills[y] == all_skills[j]:
                     count = count+1
             nums.append(count)
-        buttonofskillsplit = HoverButton(similarusers, activebackground='blue', fg="white", bg="black", text="Skill Split", command = lambda: job.skillsplit(all_non_duplicated_skills, nums)).grid(row=3)
-        label10 = tk.Label(similarusers, text =job_name).grid(row=1)
-        label1 = tk.Label(similarusers, text ="Top Skill: ").grid(row=2)
-        label2 = tk.Label(similarusers, text =topskill).grid(row=2, column=1)
-        back = HoverButton(similarusers, activebackground='blue', fg="white", bg="black", text ="Back", command = lambda: both.closetab(similarusers)).grid(row=15)
+        HoverButton(similarusers, activebackground='blue', fg="white", bg="black", text="Skill Split", command = lambda: job.skillsplit(all_non_duplicated_skills, nums)).grid(row=3)
+        tk.Label(similarusers, text =job_name).grid(row=1)
+        tk.Label(similarusers, text ="Top Skill: ").grid(row=2)
+        tk.Label(similarusers, text =topskill).grid(row=2, column=1)
+        HoverButton(similarusers, activebackground='blue', fg="white", bg="black", text ="Back", command = lambda: both.closetab(similarusers)).grid(row=15)
 
     def skillsplit(self, all_non_duplicated_skills, nums):
         try:
@@ -1314,13 +1296,13 @@ class job:
         plt.suptitle("Skill Split", fontsize = 22)
         plt.show()
         
-    def displaydescript(descript, job_name):
+    def displaydescript(self, descript, job_name):
         result_tab = ttk.Frame(tabcontrol)
         tabcontrol.add(result_tab, text="JOB DESCRIPTION")
         tabcontrol.select(result_tab)
-        des = tk.Label(result_tab, text ="Description: ").grid(row=1)
-        description = tk.Label(result_tab, text =descript).grid(row=2)
-        backbutton = HoverButton(result_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(result_tab), job.display(job_name)]).grid(row=20, column=1)
+        tk.Label(result_tab, text ="Description: ").grid(row=1)
+        tk.Label(result_tab, text =descript).grid(row=2)
+        HoverButton(result_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(result_tab), job.display(job_name)]).grid(row=20, column=1)
         
     def RECtemplate(self, job_name, result_tab, field, descript, skills, salary):
         try:
@@ -1343,9 +1325,9 @@ class job:
                     pdf.cell(200, 10, txt=skills[c], ln=linesplit+8, align="L")
                     linesplit = linesplit+2
             pdf.output(file_handle, "F")
-            fileinfolder = tk.Message(result_tab, text="File Created, Should be in the same folder as this file.").grid(row=8, column=1)
+            tk.Message(result_tab, text="File Created, Should be in the same folder as this file.").grid(row=8, column=1)
         except:
-            fileinfoldererror = tk.Message(result_tab, text="File error, file could not be produced.").grid(row=8, column=1)
+            tk.Message(result_tab, text="File error, file could not be produced.").grid(row=8, column=1)
         
     def similar_jobs(self, field, job_name, result_tab):
         result_tab.destroy()
@@ -1390,10 +1372,10 @@ class job:
         tabcontrol.select(similar_tab)
         var3 = StringVar()
         var3.set(fin[random.randint(0, len(fin)-1)])
-        ratinglabel = tk.Label(similar_tab, text ="Similar roles: ").grid(row=2, column=4)
-        star_rating = tk.OptionMenu(similar_tab, var3, *fin).grid(row=2, column=5)
-        cont = HoverButton(similar_tab, activebackground='blue', fg="white", bg="black", text="Continue", command = lambda: [job.var3confirm(var3), both.closetab(similar_tab)]).grid(row=3)
-        back = HoverButton(similar_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [job.display(job_name), both.closetab(similar_tab)]).grid(row=4)
+        tk.Label(similar_tab, text ="Similar roles: ").grid(row=2, column=4)
+        tk.OptionMenu(similar_tab, var3, *fin).grid(row=2, column=5)
+        HoverButton(similar_tab, activebackground='blue', fg="white", bg="black", text="Continue", command = lambda: [job.var3confirm(var3), both.closetab(similar_tab)]).grid(row=3)
+        HoverButton(similar_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [job.display(job_name), both.closetab(similar_tab)]).grid(row=4)
 
     def var3confirm(self, var3):
         job_name = var3.get()
@@ -1419,15 +1401,15 @@ class job:
             average = total / len(ratings)
         average = str(average)
         av_rate = "Average rating: " + average
-        ratinglabel = tk.Label(result_tab, text =av_rate).grid(row=1, column=5)
+        tk.Label(result_tab, text =av_rate).grid(row=1, column=5)
         stars = IntVar()
         stars.set(3)
-        ratinglabel = tk.Label(result_tab, text ="Rating: ").grid(row=2, column=4)
-        star_rating = tk.OptionMenu(result_tab, stars, *one_to_five).grid(row=2, column=5)
-        commentlabel = tk.Label(result_tab, text ="Comment: ").grid(row=3, column=4)
+        tk.Label(result_tab, text ="Rating: ").grid(row=2, column=4)
+        tk.OptionMenu(result_tab, stars, *one_to_five).grid(row=2, column=5)
+        tk.Label(result_tab, text ="Comment: ").grid(row=3, column=4)
         comment = tk.Entry(result_tab)
         comment.grid(row=3, column=5)
-        Enter_button = HoverButton(result_tab, activebackground='blue', fg="white", bg="black", text="Enter", command = lambda: ratingadd2(job_name, comment, stars, result_tab)).grid(row=5, column=5)
+        HoverButton(result_tab, activebackground='blue', fg="white", bg="black", text="Enter", command = lambda: ratingadd2(job_name, comment, stars, result_tab)).grid(row=5, column=5)
 
     def ratingadd2(self, job_name, comment, stars, result_tab):
         stars_ = stars.get()
@@ -1499,7 +1481,7 @@ class job:
         fieldinfo_tab = ttk.Frame(tabcontrol)
         tabcontrol.add(fieldinfo_tab, text="Field Info")
         tabcontrol.select(fieldinfo_tab)
-        fields_ = tk.Label(fieldinfo_tab, text=field).grid(row=1)
+        tk.Label(fieldinfo_tab, text=field).grid(row=1)
         handle = sql.connect("NEA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT COUNT FROM JOBS WHERE IDLE = ? AND FIELD LIKE ?", (0, "%"+field+"%"))
@@ -1517,8 +1499,8 @@ class job:
         total_count = str(total_count)
         total_count = re.sub("[^0-9]", "", total_count)
         total_count = "Total field-wide suggestions: " + total_count
-        fields_ = tk.Label(fieldinfo_tab, text=total_count).grid(row=2)
-        back = HoverButton(fieldinfo_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(fieldinfo_tab), job.display(job_name)]).grid(row=4, column=1)
+        tk.Label(fieldinfo_tab, text=total_count).grid(row=2)
+        HoverButton(fieldinfo_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(fieldinfo_tab), job.display(job_name)]).grid(row=4, column=1)
         
     def currency(self, number_hold, result_tab, job_name, salary):
         result_tab.destroy()
@@ -1527,13 +1509,13 @@ class job:
         currency_tab = ttk.Frame(tabcontrol)
         tabcontrol.add(currency_tab, text="Currency Change")
         tabcontrol.select(currency_tab)
-        Sal_set = tk.Label(currency_tab, text = salary).grid(row=2)
+        tk.Label(currency_tab, text = salary).grid(row=2)
         list_of_currency = ["GBP", "INR", "ISK", "CAD", "EUR", "SDG", "AUD", "MXN", "SEK", "NOK", "JPY", "BRL"]
         vars_ = StringVar()
         vars_.set(list_of_currency[random.randint(0, len(list_of_currency)-1)])
-        opti = tk.OptionMenu(currency_tab, vars_, *list_of_currency).grid(row=3)
-        confirming = HoverButton(currency_tab, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: job.use_currency(urlof_live, currency_tab, job_name, number_hold, vars_)).grid(row=4)
-        back = HoverButton(currency_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(currency_tab), job.display(job_name)]).grid(row=4, column=1)
+        tk.OptionMenu(currency_tab, vars_, *list_of_currency).grid(row=3)
+        HoverButton(currency_tab, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: job.use_currency(urlof_live, currency_tab, job_name, number_hold, vars_)).grid(row=4)
+        HoverButton(currency_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(currency_tab), job.display(job_name)]).grid(row=4, column=1)
 
     def use_currency(self, urlof_live, currency_tab, job_name, number_hold, vars_):
         currency_tab.destroy()
@@ -1567,8 +1549,8 @@ class job:
         currency_tab2 = ttk.Frame(tabcontrol)
         tabcontrol.add(currency_tab2, text="Currency Result")
         tabcontrol.select(currency_tab2)
-        finalsum = tk.Label(currency_tab2, text = sal).grid(row=1)
-        back = HoverButton(currency_tab2, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(currency_tab2), job.display(job_name)]).grid(row=2)
+        tk.Label(currency_tab2, text = sal).grid(row=1)
+        HoverButton(currency_tab2, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(currency_tab2), job.display(job_name)]).grid(row=2)
         
     def listingsearch(self, result_tab, job_name):
         result_tab.destroy()
@@ -1632,7 +1614,7 @@ class job:
             skill_tab = ttk.Frame(tabcontrol)
             tabcontrol.add(skill_tab, text="No Results")
             tabcontrol.select(skill_tab)
-            back = HoverButton(skill_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(skill_tab), job.display(hold)]).grid(row=2)
+            HoverButton(skill_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(skill_tab), job.display(hold)]).grid(row=2)
         else:
             try:
                 namesofjobs = soup.findAll("div", {"class": "title"})
@@ -1682,14 +1664,14 @@ class job:
             for x in range(0, len(jobnames)):
                 jobnames[x] = jobnames[x] + " --- " + all_location[x]
                 allnames.append(jobnames[x])
-                jobnamelabel = tk.Label(jobresults, text=jobnames[x]).grid(row=count+1)
+                tk.Label(jobresults, text=jobnames[x]).grid(row=count+1)
                 count = count+2
             VAR = StringVar()
             VAR.set(allnames[random.randint(0, len(allnames)-1)])
-            labelofselect = tk.Label(jobresults, text = "Select position interest: ").grid(row=1)
-            continue_ = HoverButton(jobresults, activebackground='blue', fg="white", bg="black", text="Continue", command = lambda: [job.joblisting_indeed(hold, hrefs, jobnames, VAR), both.closetab(jobresults)]).grid(row=2, column=1)
-            selection = tk.OptionMenu(jobresults, VAR, *allnames).grid(row=1, column=1)
-            back_button = HoverButton(jobresults, activebackground='blue', fg="white", bg="black", text="BACK", command = lambda: [job.display(hold), both.closetab(jobresults)]).grid(row=count+10)
+            tk.Label(jobresults, text = "Select position interest: ").grid(row=1)
+            HoverButton(jobresults, activebackground='blue', fg="white", bg="black", text="Continue", command = lambda: [job.joblisting_indeed(hold, hrefs, jobnames, VAR), both.closetab(jobresults)]).grid(row=2, column=1)
+            tk.OptionMenu(jobresults, VAR, *allnames).grid(row=1, column=1)
+            HoverButton(jobresults, activebackground='blue', fg="white", bg="black", text="BACK", command = lambda: [job.display(hold), both.closetab(jobresults)]).grid(row=count+10)
 
     def joblisting_indeed(self, hold, hrefs, jobnames, VAR):
         listname = VAR.get()
@@ -1699,10 +1681,10 @@ class job:
         list_tab = ttk.Frame(tabcontrol)
         tabcontrol.add(list_tab, text="Listing")
         tabcontrol.select(list_tab)
-        name = tk.Label(list_tab, text = listname, font= "Ariel 15 italic", fg="Blue").grid(row=1, columnspan=3)
-        copy = HoverButton(list_tab, activebackground='blue', fg="white", bg="black", text="Copy URL to Clipboard", command = lambda: job.copytoclip(href)).grid(row=2, column=1)
-        open_url = HoverButton(list_tab, activebackground='blue', fg="white", bg="black", text="Open URL", command = lambda: job.openurl(href)).grid(row=3, column=1)
-        back = HoverButton(list_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [job.display(hold), both.closetab(list_tab)]).grid(row=4, column=1)
+        tk.Label(list_tab, text = listname, font= "Ariel 15 italic", fg="Blue").grid(row=1, columnspan=3)
+        HoverButton(list_tab, activebackground='blue', fg="white", bg="black", text="Copy URL to Clipboard", command = lambda: job.copytoclip(href)).grid(row=2, column=1)
+        HoverButton(list_tab, activebackground='blue', fg="white", bg="black", text="Open URL", command = lambda: job.openurl(href)).grid(row=3, column=1)
+        HoverButton(list_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [job.display(hold), both.closetab(list_tab)]).grid(row=4, column=1)
 
     def openurl(self, href):
         try:
@@ -1717,11 +1699,11 @@ class job:
         tabcontrol.add(skill_tab, text="JOB SKILLS")
         tabcontrol.select(skill_tab)
         tag = job_name + " skills:"
-        label = tk.Label(skill_tab, text=tag).grid(row=1)
-        labelgap = tk.Label(skill_tab, text=" ").grid(row=2)
+        tk.Label(skill_tab, text=tag).grid(row=1)
+        tk.Label(skill_tab, text=" ").grid(row=2)
         for n in range(0, len(skills)-1):
-                var[n] = tk.Label(skill_tab, text=skills[n]).grid(row=n+3)
-        backbutton = HoverButton(skill_tab, activebackground='blue', fg="white", bg="black", text="BACK", command = lambda: [job.display(job_name), both.closetab(skill_tab)]).grid(row=20)
+                tk.Label(skill_tab, text=skills[n]).grid(row=n+3)
+        HoverButton(skill_tab, activebackground='blue', fg="white", bg="black", text="BACK", command = lambda: [job.display(job_name), both.closetab(skill_tab)]).grid(row=20)
                                                                                         
     def search(self, searchjobentry, tab1):
         #search in database word by word of each job and use LIKE and % to widen critera. If no results, option to add a job to be reviewed.
@@ -1781,18 +1763,18 @@ class job:
         missing = ttk.Frame(tabcontrol)
         tabcontrol.add(missing, text="ADD JOB")
         tabcontrol.select(missing)
-        JOB_ = tk.Label(missing, text="THERE WAS NO FOUND JOBS, add a job to be reviewed by an Admin.").grid(row=1, column=1)
-        JOB_name = tk.Label(missing, text="JOBNAME:").grid(row=2)
+        tk.Label(missing, text="THERE WAS NO FOUND JOBS, add a job to be reviewed by an Admin.").grid(row=1, column=1)
+        tk.Label(missing, text="JOBNAME:").grid(row=2)
         JOB__name = tk.Entry(missing)
         JOB__name.grid(row=2, column=1)
-        JOB_des = tk.Label(missing, text="DESCRIPTION:").grid(row=3)
+        tk.Label(missing, text="DESCRIPTION:").grid(row=3)
         JOB__des = tk.Entry(missing)
         JOB__des.grid(row=3, column=1)
-        JOB_field = tk.Label(missing, text="FIELD:").grid(row=4)
+        tk.Label(missing, text="FIELD:").grid(row=4)
         JOB__field = tk.Entry(missing)
         JOB__field.grid(row=4, column=1)
-        JOB_button = HoverButton(missing, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(missing), job.mainmenu()]).grid(row=5)
-        JOB_button = HoverButton(missing, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: job.missingjob2(JOB__name, missing, JOB__des, JOB_field)).grid(row=5, column=1)
+        HoverButton(missing, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(missing), job.mainmenu()]).grid(row=5)
+        HoverButton(missing, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: job.missingjob2(JOB__name, missing, JOB__des, JOB_field)).grid(row=5, column=1)
         
     def missingjob2(self, JOB__name, missing, JOB__des,  JOB_field):
         #add info from missingjob1 into database to be reviewed by an admin (aka. me)
@@ -1852,9 +1834,9 @@ class job:
         label= tk.Label(new_tab, text= "POPULAR JOBS:").grid(row=1)
         VAR = StringVar()
         VAR.set(names[random.randint(0, len(names)-1)])
-        options = tk.OptionMenu(new_tab, VAR, *names).grid(row=1, column=1)
-        confirmation = HoverButton(new_tab, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: [job.popular2(VAR), both.closetab(new_tab)]).grid(row=2)
-        back_main = HoverButton(new_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(new_tab), job.mainmenu()]).grid(row=3)
+        tk.OptionMenu(new_tab, VAR, *names).grid(row=1, column=1)
+        HoverButton(new_tab, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: [job.popular2(VAR), both.closetab(new_tab)]).grid(row=2)
+        HoverButton(new_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(new_tab), job.mainmenu()]).grid(row=3)
         
     def popular2(self, VAR):
         job_name = VAR.get()
@@ -1876,9 +1858,9 @@ class job:
         label= tk.Label(fieldsearch, text= "Choose a Field").grid(row=1)
         variance = StringVar()
         variance.set(fields[random.randint(0, len(fields)-1)])
-        options = tk.OptionMenu(fieldsearch, variance, *fields).grid(row=2)
-        confirmation = HoverButton(fieldsearch, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: job.field_data(variance, fieldsearch)).grid(row=3)
-        back_main = HoverButton(fieldsearch, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(fieldsearch), job.mainmenu()]).grid(row=4)
+        tk.OptionMenu(fieldsearch, variance, *fields).grid(row=2)
+        HoverButton(fieldsearch, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: job.field_data(variance, fieldsearch)).grid(row=3)
+        HoverButton(fieldsearch, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(fieldsearch), job.mainmenu()]).grid(row=4)
 
     def field_data(self, variance, fieldsearch):
         variance = variance.get()
@@ -1906,10 +1888,10 @@ class job:
         results_field = ttk.Frame(tabcontrol)
         tabcontrol.add(results_field, text="FIELD RESULTS")
         tabcontrol.select(results_field)
-        options = tk.OptionMenu(results_field, var_job, *new).grid(row=1)
-        confirm= HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: job.getresultoffield_search(var_job, results_field)).grid(row=2)
+        tk.OptionMenu(results_field, var_job, *new).grid(row=1)
+        HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Confirm", command = lambda: job.getresultoffield_search(var_job, results_field)).grid(row=2)
         tab1 = ttk.Frame(tabcontrol)
-        back= HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Back", command= lambda: [job.fieldstart(tab1), job.delete_fieldresults(tab1, results_field)]).grid(row=3)
+        HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Back", command= lambda: [job.fieldstart(tab1), job.delete_fieldresults(tab1, results_field)]).grid(row=3)
 
     def delete_fieldresults(self, tab1, results_field):
         tab1.destroy()
@@ -2003,7 +1985,7 @@ class job:
         cont = HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Continue", command= lambda: [both.closetab(results_field), job.popular2(var)]).grid(row=3, column=1)
         back = HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Back", command= lambda: [both.closetab(results_field), job.mainmenu()]).grid(row=3)
 
-def loaddata(self):
+def loaddata():
     txts = ["Science.txt", "Agri.txt", "Arch.txt", "Business.txt", "Arts.txt", "Finance.txt", "Gov.txt", "Health.txt", "Hospit.txt", "Human.txt", "IT.txt", "Law.txt", "Manufact.txt", "Market.txt", "Transport.txt", "Edu.txt"]
     counttxt = 0
     alljobs = []
@@ -2038,7 +2020,7 @@ def loaddata(self):
         fieldlist.append(item)
     return fieldlist
         
-def getskillslist(self):
+def getskillslist():
     handle = sql.connect("NEA.db")
     cursor = handle.cursor()
     cursor.execute("SELECT JOBS.URL FROM JOBS WHERE JOBS.JOBID > 0")
