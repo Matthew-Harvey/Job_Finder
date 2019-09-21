@@ -1,3 +1,3 @@
-# Job_Finder
+# Job Finder Reccomendation Software
 
-open NEA.py to see all code....
+App made to give varoius recommendations of over 300 jobs based on user inputs and characteristics.
