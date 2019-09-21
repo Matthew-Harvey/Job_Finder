@@ -50,7 +50,7 @@ class both:
     def login(self, attempts, tab1, IDENTentry, Passwordentry, uniorjob):
         IDENT_insert = IDENTentry.get()
         PIN_insert = Passwordentry.get()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT USERS.USERID FROM USERS")
         ids = cursor.fetchall()
@@ -103,7 +103,7 @@ class both:
         tab4 = ttk.Frame(tabcontrol)
         tabcontrol.add(tab4, text="Update Info")
         tabcontrol.select(tab4)
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT USERID, NAME, QUALLEVEL, SKILL1, SKILL2, SKILL3, CURRENTJOB FROM USERS WHERE USERID = ? AND USERID > ?;", (ID_insert, "0"))
         userinfo = cursor.fetchall()
@@ -158,7 +158,7 @@ class both:
         qual = qual.get()
         name = ident.get()
         current = current.get()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("UPDATE USERS SET QUALLEVEL = ?, NAME = ?, CURRENTJOB = ?, SKILL1 = ?, SKILL2 = ?, SKILL3 = ? WHERE USERID = ?", (qual, name, current, skill1, skill2, skill3, ID_insert))
         handle.commit()
@@ -189,7 +189,7 @@ class both:
             if current_insert == "":
                 current_insert = "N"
             tab6.destroy()
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("INSERT INTO USERS VALUES(?,?,?,?,?,?,?,?,?)", (ID_insert, username_insert, Password_insert1, quallevel_insert, skill1_insert, skill2_insert, skill3_insert, ".", current_insert))
             handle.commit()
@@ -220,7 +220,7 @@ class both:
         choices = ["< High School Diploma", "High School Diploma", "Master", "Bachelor", "Associate", "Some College", "Doctoral Degree", "Vocational Certificate"]
         z = False
         ID_insert = IDentry.get()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT USERID FROM USERS")
         allids = cursor.fetchall()
@@ -358,7 +358,7 @@ class uni:
         points = str(digit1)+str(digit2)+str(digit3)
         points = int(points)
         both.closetab(tab0)
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT UNINAME FROM UNIENTRY WHERE UCAS <= ? AND  UCAS != ?;", (points, "0"))
         entry = cursor.fetchall()
@@ -370,7 +370,7 @@ class uni:
         if len(entry) > 3:
             ranks = []
             for q in range(0, len(entry)):
-                handle = sql.connect("NEA.db")
+                handle = sql.connect("RecommendDATA.db")
                 cursor = handle.cursor()
                 cursor.execute("SELECT RANK FROM RANKINGS WHERE UNINAME LIKE ? AND  RANK != ?;", (entry[q], ""))
                 ranking = cursor.fetchall()
@@ -517,7 +517,7 @@ class uni:
         uniname = uniname.replace(" ", "-")
         url = "https://www.thecompleteuniversityguide.co.uk/"
         url = url+uniname
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT RANK FROM RANKINGS WHERE UNINAME LIKE ? AND  RANK != ?;", (name, ""))
         ranks = cursor.fetchall()
@@ -550,7 +550,7 @@ class uni:
         similar = []
         for b in range(0, 20):
             point = point+1
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT UNINAME FROM UNIENTRY WHERE UCAS = ? AND  UNINAME != ?;", (point, ""))
             names = cursor.fetchall()
@@ -672,7 +672,7 @@ class uni:
                 entrypoint= ""
             entrypoint = str(entrypoint)
             entrypoint = re.sub("[^0-9]", "", entrypoint)
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("INSERT INTO UNIENTRY VALUES(?,?,?)", (i, names[i], entrypoint))
             cursor.execute("INSERT INTO RANKINGS VALUES(?,?,?)", (i, names[i], ranks))
@@ -736,14 +736,15 @@ class job:
         recordchoices = []
         var1 = IntVar()
         tk.Label(tab3, text=" ").grid(row=1, column=1)
-        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)
+        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)
 
-    def recurfield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1):
+    def recurfield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1, label):
         if countofiterations == 0:
             tk.Label(tab3, text="Choose a proirity of each field so recommendation can be more appropriate.").grid(row=1)
         else:
             var1=var1.get()
             recordchoices.append(var1)
+            label.destroy()
         if countofiterations == len(fields):
             job.updatefields(ID_insert, recordchoices, fields, tab3)
         try:
@@ -756,22 +757,22 @@ class job:
             tk.Radiobutton(tab3, text="Neutral", value=3, variable=var1).grid(row=5)
             tk.Radiobutton(tab3, text="Not Interested", value=2, variable=var1).grid(row=6)
             tk.Radiobutton(tab3, text="Avoid", value=1, variable=var1).grid(row=7)
-            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="NEXT FIELD", command= lambda: job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)).grid(row=8)
-            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="SKIP ALL", command= lambda: job.Increasefield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)).grid(row=8, column=2)
+            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="NEXT FIELD", command= lambda: job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)).grid(row=8)
+            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="SKIP ALL", command= lambda: job.Increasefield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)).grid(row=8, column=2)
         except:
             hold = 0
 
-    def Increasefield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1):
+    def Increasefield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1, label):
         while countofiterations < 16:
             countofiterations=countofiterations+1
-        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)
+        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)
 
     def updatefields(self, ID_insert, recordchoices, fields, tab3):
         recordchoices.reverse()
         tab3.destroy()
         recordchoices.pop()
         recordchoices.reverse()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("UPDATE USERS SET FIELDS = ? WHERE USERID = ?;", (str(recordchoices), ID_insert))
         handle.commit()
@@ -803,7 +804,7 @@ class job:
                 finalfields.append(fields[store[i]])
         all_ = []
         for e in range(0, len(finalfields)):
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT JOBNAME FROM JOBS WHERE FIELD = ?;", (finalfields[e],))
             alljobsinfields = cursor.fetchall()
@@ -825,14 +826,14 @@ class job:
         for c in range(0, len(fin)):
             fin[c] = str(fin[c])
             fin[c] = fin[c][:len(fin[c])-1]
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT QUALLEVEL FROM JOBS WHERE JOBNAME LIKE ? AND IDLE = ?", ("%"+fin[c]+"%", 0)) # sql to remove the tuple status by using like.
             qualforjob = cursor.fetchall()
             handle.commit()
             handle.close()
             nameofqual = job.findcommonqual(qualforjob)
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT QUALLEVEL FROM USERS WHERE USERID = ? AND USERID > ?", (ID_insert, "0"))
             userqual = cursor.fetchall()
@@ -848,7 +849,7 @@ class job:
             if joblist == []:
                 job.workxp(fin, ID_insert)
             else:
-                handle = sql.connect("NEA.db")
+                handle = sql.connect("RecommendDATA.db")
                 cursor = handle.cursor()
                 cursor.execute("SELECT JOBID FROM JOBS WHERE JOBNAME LIKE ? AND IDLE = ?", ("%"+joblist[0]+"%", 0))
                 jobid = cursor.fetchall()
@@ -910,7 +911,7 @@ class job:
             varnames = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
             namesofvariables = ["S"]*250
             for c in range(0, len(joblist)):
-                handle = sql.connect("NEA.db")
+                handle = sql.connect("RecommendDATA.db")
                 cursor = handle.cursor()
                 cursor.execute("SELECT WORKEXP FROM JOBS WHERE JOBNAME LIKE ? AND IDLE = ?", ("%"+joblist[c]+"%", 0))
                 workexp = cursor.fetchall()
@@ -952,7 +953,7 @@ class job:
         for r in range(0, len(joblist)):
             VAR.append(varnames[r].get())
         for p in range(0, len(joblist)):
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT WORKEXP FROM JOBS WHERE JOBNAME LIKE ? AND IDLE = ?", ("%"+joblist[p]+"%", 0))
             workexp = cursor.fetchall()
@@ -991,7 +992,7 @@ class job:
         num = []
         if len(final_list) > 1: # sorting by amount of people the job employees (based on projected 2018 stats).
             for r in range(0, len(final_list)):
-                handle = sql.connect("NEA.db")
+                handle = sql.connect("RecommendDATA.db")
                 cursor = handle.cursor()
                 cursor.execute("SELECT EMPLOYEES FROM JOBS WHERE JOBNAME LIKE ? AND JOBID > ?", ("%"+final_list[r]+"%", "0"))
                 employ = cursor.fetchall()
@@ -1035,7 +1036,7 @@ class job:
                 job_name = job_name[1:]
             if job_name[len(job_name)-1] == "\\":
                 job_name = job_name[:len(job_name)-1]
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT JOBID FROM JOBS WHERE JOBNAME LIKE ? AND IDLE = ?", ("%"+job_name+"%", 0))
             jobid = cursor.fetchall()
@@ -1054,7 +1055,7 @@ class job:
         result_tab = ttk.Frame(tabcontrol)
         tabcontrol.add(result_tab, text=job_name)
         tabcontrol.select(result_tab)
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT EMPLOYEES FROM JOBS WHERE JOBNAME LIKE ? AND JOBID > ?", ("%"+job_name+"%", "0"))
         employees = cursor.fetchall()
@@ -1220,7 +1221,7 @@ class job:
         similarusers = ttk.Frame(tabcontrol)
         tabcontrol.add(similarusers, text="SIMILAR USER TRAITS")
         tabcontrol.select(similarusers)
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT JOBID FROM JOBS WHERE JOBNAME LIKE ? AND IDLE = ?", ("%"+job_name+"%", 0))
         jobid = cursor.fetchall()
@@ -1331,7 +1332,7 @@ class job:
         
     def similar_jobs(self, field, job_name, result_tab):
         result_tab.destroy()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT JOBNAME FROM JOBS WHERE FIELD LIKE ? AND JOBID > ?", ("%"+field+"%", "0"))
         joblist = cursor.fetchall()
@@ -1383,7 +1384,7 @@ class job:
         
     def ratingadd(self, job_name, result_tab):
         one_to_five = [1, 2, 3, 4, 5]
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT JOBID FROM JOBS WHERE JOBNAME LIKE ? AND JOBID > ?", ("%"+job_name+"%", 0))
         jobid = cursor.fetchall()
@@ -1414,7 +1415,7 @@ class job:
     def ratingadd2(self, job_name, comment, stars, result_tab):
         stars_ = stars.get()
         comment_ = comment.get()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT JOBID FROM JOBS WHERE JOBNAME LIKE ? AND IDLE = ?", ("%"+job_name+"%", 0))
         jobID = cursor.fetchall()
@@ -1435,7 +1436,7 @@ class job:
             import numpy as np
         except:
             cont = True
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT QUALLEVEL FROM JOBS WHERE JOBNAME LIKE ? AND JOBID > ?", ("%"+job_name+"%", "0"))
         qualforjob = cursor.fetchall()
@@ -1482,7 +1483,7 @@ class job:
         tabcontrol.add(fieldinfo_tab, text="Field Info")
         tabcontrol.select(fieldinfo_tab)
         tk.Label(fieldinfo_tab, text=field).grid(row=1)
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT COUNT FROM JOBS WHERE IDLE = ? AND FIELD LIKE ?", (0, "%"+field+"%"))
         counts = cursor.fetchall()
@@ -1711,7 +1712,7 @@ class job:
         searchjobentry = searchjobentry.split(" ")
         results = []
         for c in range(0, len(searchjobentry)):
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT JOBNAME FROM JOBS WHERE JOBNAME LIKE ? AND IDLE = ?", ("%"+searchjobentry[c]+"%", 0))
             jobnames = cursor.fetchall()
@@ -1781,7 +1782,7 @@ class job:
         JOB__name = JOB__name.get()
         JOB__des = JOB__des.get()
         missing.destroy()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("INSERT INTO USER_RECOMMENDATIONS VALUES(?,?,?)", (JOB__name, JOB__des, JOB_field))
         handle.commit()
@@ -1791,7 +1792,7 @@ class job:
     def popular(self, tab1):
         tab1.destroy()
         # uses count of recommendations for each job
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT COUNT FROM JOBS")
         counts = cursor.fetchall()
@@ -1804,7 +1805,7 @@ class job:
             counts_array.append(counts[t])
         counts = counts_array
         counts.sort()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         names = []
         for t in range(0, 8):
@@ -1831,7 +1832,7 @@ class job:
         new_tab = ttk.Frame(tabcontrol)
         tabcontrol.add(new_tab, text="POPULAR JOBS")
         tabcontrol.select(new_tab)
-        label= tk.Label(new_tab, text= "POPULAR JOBS:").grid(row=1)
+        tk.Label(new_tab, text= "POPULAR JOBS:").grid(row=1)
         VAR = StringVar()
         VAR.set(names[random.randint(0, len(names)-1)])
         tk.OptionMenu(new_tab, VAR, *names).grid(row=1, column=1)
@@ -1855,7 +1856,7 @@ class job:
         fieldsearch = ttk.Frame(tabcontrol)
         tabcontrol.add(fieldsearch, text="FIELD SEARCH")
         tabcontrol.select(fieldsearch)
-        label= tk.Label(fieldsearch, text= "Choose a Field").grid(row=1)
+        tk.Label(fieldsearch, text= "Choose a Field").grid(row=1)
         variance = StringVar()
         variance.set(fields[random.randint(0, len(fields)-1)])
         tk.OptionMenu(fieldsearch, variance, *fields).grid(row=2)
@@ -1865,7 +1866,7 @@ class job:
     def field_data(self, variance, fieldsearch):
         variance = variance.get()
         fieldsearch.destroy()
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute(("SELECT JOBNAME FROM JOBS WHERE FIELD = ? AND IDLE = ?"), (variance, 0))
         names = cursor.fetchall()
@@ -1907,7 +1908,7 @@ class job:
 
     def rating(self, tab1):
         tab1.destroy() # after recommendation, user gives feedback rating 0-5 and this will search jobs
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("SELECT JOBID FROM RATINGS")
         ids = cursor.fetchall()
@@ -1925,7 +1926,7 @@ class job:
                 ident.append(ids[h])
         averages = []
         for l in range(0, len(ident)):
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT RATING FROM RATINGS WHERE JOBID = ? AND JOBID > ?", (ident[l], 0))
             ratings = cursor.fetchall()
@@ -1966,7 +1967,7 @@ class job:
                 final_ids2.append(final_ids[k])
         job_names = []
         for q in range(0, len(final_ids2)):
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("SELECT JOBNAME FROM JOBS WHERE JOBID = ? AND JOBID > ?", (final_ids2[q], 0))
             job_name = cursor.fetchall()
@@ -1980,10 +1981,39 @@ class job:
         tabcontrol.select(results_field)
         var = StringVar()
         var.set(job_names[random.randint(0, len(job_names)-1)])
-        label = tk.Label(results_field, text="Highly rated jobs: ").grid(row=2)
-        options = OptionMenu(results_field, var, *job_names).grid(row=2, column=1)
-        cont = HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Continue", command= lambda: [both.closetab(results_field), job.popular2(var)]).grid(row=3, column=1)
-        back = HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Back", command= lambda: [both.closetab(results_field), job.mainmenu()]).grid(row=3)
+        tk.Label(results_field, text="Highly rated jobs: ").grid(row=2)
+        OptionMenu(results_field, var, *job_names).grid(row=2, column=1)
+        HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Continue", command= lambda: [both.closetab(results_field), job.popular2(var)]).grid(row=3, column=1)
+        HoverButton(results_field, activebackground='blue', fg="white", bg="black", text="Back", command= lambda: [both.closetab(results_field), job.mainmenu()]).grid(row=3)
+
+#
+#
+#
+#
+
+class complex:
+    def append(self, array, value):
+        cont = True
+
+    def sort(self, array):
+        cont = True
+
+    def reverse(self, array):
+        cont = True
+
+    def pop(self, array):
+        cont = True
+
+    def strip(self, string):
+        cont = True
+
+    def replace(self, string):
+        cont = True
+
+#
+#
+#
+#
 
 def loaddata():
     txts = ["Science.txt", "Agri.txt", "Arch.txt", "Business.txt", "Arts.txt", "Finance.txt", "Gov.txt", "Health.txt", "Hospit.txt", "Human.txt", "IT.txt", "Law.txt", "Manufact.txt", "Market.txt", "Transport.txt", "Edu.txt"]
@@ -2005,7 +2035,7 @@ def loaddata():
             url = fieldjob[a+1]
             a = a+2
             jobid = jobid+1
-            handle = sql.connect("NEA.db")
+            handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("INSERT INTO JOBS VALUES(?,?,?,?,?,?,?,?,?,?,?,?)", (jobid, name, url, ".", ".", ".", ".", ".", fieldname, ".", ".", "0"))
             handle.commit()
@@ -2021,7 +2051,7 @@ def loaddata():
     return fieldlist
         
 def getskillslist():
-    handle = sql.connect("NEA.db")
+    handle = sql.connect("RecommendDATA.db")
     cursor = handle.cursor()
     cursor.execute("SELECT JOBS.URL FROM JOBS WHERE JOBS.JOBID > 0")
     URLlist = cursor.fetchall()
@@ -2163,16 +2193,15 @@ def getskillslist():
             continue_ = True
         employ = str(new_employ)
         #print(employ)
-        handle = sql.connect("NEA.db")
+        handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
         cursor.execute("UPDATE JOBS SET SKILLS = ?, QUALLEVEL = ?, DESCRIPTION = ?, SALARY = ?, WORKEXP = ?, EMPLOYEES = ? WHERE JOBID = ?;", (str(keyskills), str(store), des, salary, stringoutput, employ, count))
         handle.commit()
         count=count+1
         iterate = iterate+1
 
-
 try:   
-    handle = sql.connect("NEA.db")
+    handle = sql.connect("RecommendDATA.db")
     cursor = handle.cursor()
     cursor.execute("CREATE TABLE RANKINGS(UNI_ID INT, UNINAME TEXT, RANK TEXT)")
     cursor.execute("CREATE TABLE UNIENTRY(UNI_ID INT, UNINAME TEXT, UCAS INT)")
