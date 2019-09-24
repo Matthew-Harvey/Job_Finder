@@ -307,7 +307,7 @@ class uni:
         entrybox.insert(END, "University Name")
         entrybox.grid(row=7+1, column=1)
         HoverButton(tab0, activebackground='red', fg="white", bg="black", text="ENTER", command = lambda: uni.searchbyuni(entrybox, tab0)).grid(row=8+1, column=1)
-        HoverButton(tab0, activebackground='red', fg="white", bg="black", text="Rank search by subject", command = lambda: [both.closetab(tab0), uni.searchbysub()]).grid(row=4+1, column=2)
+        HoverButton(tab0, activebackground='red', fg="white", bg="black", text="Subject Search", command = lambda: [both.closetab(tab0), uni.searchbysub()]).grid(row=4+1, column=2)
         tk.Label(tab0, text=" ").grid(row=9+1)
         tk.Label(tab0, text="LOGIN:", font="Ariel 15 bold italic", fg="red").grid(row=10+1, column=1)
         IDENTentry = tk.Entry(tab0)
@@ -736,19 +736,19 @@ class job:
         recordchoices = []
         var1 = IntVar()
         tk.Label(tab3, text=" ").grid(row=1, column=1)
-        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)
+        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)
 
-    def recurfield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1, label):
+    def recurfield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1):
         if countofiterations == 0:
             tk.Label(tab3, text="Choose a proirity of each field so recommendation can be more appropriate.").grid(row=1)
         else:
             var1=var1.get()
             recordchoices.append(var1)
-            label.destroy()
         if countofiterations == len(fields):
             job.updatefields(ID_insert, recordchoices, fields, tab3)
         try:
-            tk.Label(tab3, text=fields[countofiterations]).grid(row=2)
+            label = tk.Label(tab3, text=fields[countofiterations])
+            label.grid(row=2)
             tk.Label(tab3, text=str(countofiterations)+"/"+str(len(fields)-1)).grid(row=2, column=1)
             countofiterations=countofiterations+1
             var1 = IntVar()
@@ -757,15 +757,15 @@ class job:
             tk.Radiobutton(tab3, text="Neutral", value=3, variable=var1).grid(row=5)
             tk.Radiobutton(tab3, text="Not Interested", value=2, variable=var1).grid(row=6)
             tk.Radiobutton(tab3, text="Avoid", value=1, variable=var1).grid(row=7)
-            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="NEXT FIELD", command= lambda: job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)).grid(row=8)
-            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="SKIP ALL", command= lambda: job.Increasefield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)).grid(row=8, column=2)
+            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="NEXT FIELD", command= lambda: [job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1), both.closetab(label)]).grid(row=8)
+            HoverButton(tab3, activebackground='blue', fg="white", bg="black", text="SKIP ALL", command= lambda: job.Increasefield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)).grid(row=8, column=2)
         except:
             hold = 0
 
-    def Increasefield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1, label):
+    def Increasefield(self, ID_insert, tab3, fields, countofiterations, recordchoices, var1):
         while countofiterations < 16:
             countofiterations=countofiterations+1
-        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1, label)
+        job.recurfield(ID_insert, tab3, fields, countofiterations, recordchoices, var1)
 
     def updatefields(self, ID_insert, recordchoices, fields, tab3):
         recordchoices.reverse()
@@ -1173,7 +1173,7 @@ class job:
         number_hold = salary
         salary = "$"+salary
         HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text=salary, command = lambda: job.currency(number_hold, result_tab, job_name, salary)).grid(row=6, column=1)
-        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="DESCRIPTION", command = lambda: [job.displaydescript(descript, job_name), closetab(result_tab)]).grid(row=7, column=1)
+        HoverButton(result_tab, activebackground='light blue', fg="Black", bg="White", text="DESCRIPTION", command = lambda: [job.displaydescript(descript, job_name), both.closetab(result_tab)]).grid(row=7, column=1)
         cursor.execute("SELECT SKILLS FROM JOBS WHERE JOBNAME LIKE ? AND JOBID > ?", ("%"+job_name+"%", "0"))
         skill = cursor.fetchall()
         handle.commit()
