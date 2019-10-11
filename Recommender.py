@@ -244,7 +244,7 @@ class both:
                     tabcontrol.add(error, text="Id taken")
                     tabcontrol.select(error)
                     tk.Label(error, text="ID is already taken...").grid(row=1)
-                    HoverButton(error, activebackground='blue', fg="white", bg="black", text="Back to Main Menu", command = lambda: [closetab(error), mainmenu()]).grid(row=2)
+                    HoverButton(error, activebackground='blue', fg="white", bg="black", text="Back to Main Menu", command = lambda: [closetab(error), job.mainmenu()]).grid(row=2)
         if z == False:
             tab6 = ttk.Frame(tabcontrol)
             tabcontrol.add(tab6, text="CREATE USER")
@@ -1779,6 +1779,7 @@ class job:
         
     def missingjob2(self, JOB__name, missing, JOB__des,  JOB_field):
         #add info from missingjob1 into database to be reviewed by an admin (aka. me)
+        JOB_field = JOB_field.get()
         JOB__name = JOB__name.get()
         JOB__des = JOB__des.get()
         missing.destroy()
@@ -1992,23 +1993,99 @@ class job:
 #
 
 class complex:
-    def append(self, array, value):
+
+    class append:
+        def __init__(self, array, value):
+            self.__array = array # private access modifiers
+            self.__value = value
+
+        def concat(self):
+            self.__array = self.__array + [self.__value]
+            return self.__array
+
+        def insert(self, pos):
+            self.__postition = pos
+            self.__array = self.__array[:pos] + [self.__value] + self.__array[pos:]
+            return self.__array
+
+    class randomint:
+        def __init__(self, min, max):
+            self.__min = min
+            self.__max = max
+            self.__allvalues = []
+
+        def calculate(self):
+            for x in range(self.__min, self.__max):
+                self.__allvalues = complex.append(self.__allvalues, x).concat()
+            return self.__allvalues[random.randint(self.__min, self.__max)]
+
+    class sort:
+        def __init(self, array):
+            self.__array = array
+            self.__sort1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            self.__sort2 = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+            self.__static = [""]*len(array)
+
+        def nums(self):
+            for num in self.__array:
+                for digit in num:
+                    cont = True
+
+        def alpha(self):
+            for word in self.__array:
+                for letter in word:
+                    cont = True
+
+    class delete:
+        def __init__(self, array, pos):
+            self.__pos = pos
+            self.__array = array
+        
+        def _del(self):
+            self.__array = self.__array[:self.__pos] + self.__array[self.__pos+1:]
+            return self.__array
+
+    class reverse:
+        def __init__(self, array):
+            self.__array = array
+            self.__newarray = []
+            self.__len = len(array)
+            self.__iter = 1
+
+        def swap(self):
+            for item in self.__array:
+                self.__newarray = complex.append(self.__newarray, self.__array[self.__len - self.__iter]).concat()
+                self.__iter = self.__iter + 1
+            return self.__newarray
+
+    class pop():
+        def __init__(self, array):
+            self.__pos = len(array)-1
+            self.__array = array
+            self.__temp = array
+        
+        def last(self):
+            self.__array = complex.delete(self.__array, self.__pos)._del()
+            return self.__array, self.__temp[self.__pos]
+
+    class strip():
         cont = True
 
-    def sort(self, array):
-        cont = True
-
-    def reverse(self, array):
-        cont = True
-
-    def pop(self, array):
-        cont = True
-
-    def strip(self, string):
-        cont = True
-
-    def replace(self, string):
-        cont = True
+    class replace:
+        def __init__(self, char, string):
+            self.__string = string
+            self.__char = char
+            self.__newstring = ""
+        
+        def chars(self):
+            skip = False
+            for letter in self.__string:
+                if letter == self.__char:
+                    skip = True
+                if skip == False:
+                    self.__newstring = self.__newstring + letter
+                skip = False
+            return self.__newstring
 
 #
 #
@@ -2049,7 +2126,7 @@ def loaddata():
         item = item.rstrip()
         fieldlist.append(item)
     return fieldlist
-        
+
 def getskillslist():
     handle = sql.connect("RecommendDATA.db")
     cursor = handle.cursor()
@@ -2213,7 +2290,7 @@ try:
     cursor.execute("CREATE TABLE USER_RECOMMENDATIONS(JOBNAME TEXT, DESCRIPTION TEXT, FIELD TEXT)")
     handle.commit()
     handle.close()
-    getucaspoints()
+    uni.getucaspoints()
     fieldlist = loaddata()
     getskillslist()
 except:
@@ -2230,3 +2307,4 @@ both.home()
 
 tabcontrol.pack(expand=1, fill="both")
 window.mainloop()
+
