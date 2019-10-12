@@ -2020,21 +2020,71 @@ class complex:
             return self.__allvalues[random.randint(self.__min, self.__max)]
 
     class sort:
-        def __init(self, array):
+        def __init__(self, array):
             self.__array = array
             self.__sort1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             self.__sort2 = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-            self.__static = [""]*len(array)
+            self.__static = []
+            self.__allstatic = []
+            self.__test = False
 
         def nums(self):
-            for num in self.__array:
-                for digit in num:
-                    cont = True
+            while self.__test == False:
+                self.__repeat = 0
+                for x in range(0, len(self.__array)-1):
+                    try:
+                        self.__num = self.__array[x]
+                        self.__num = int(self.__num)
+                        self.__num2 = self.__array[x+1]
+                        self.__num2 = int(self.__num2)
+                        if self.__num >= self.__num2:
+                            self.__array[x] = self.__num2
+                            self.__array[x+1] = self.__num
+                            self.__test = False
+                        else:
+                            self.__repeat = self.__repeat+1
+                    except:
+                        self.__test = False
+                self.__len = len(self.__array)/2
+                self.__len = int(self.__len)+1
+                if self.__repeat >= self.__len:
+                    self.__test = True
+            return self.__array
 
         def alpha(self):
-            for word in self.__array:
-                for letter in word:
-                    cont = True
+            for x in range(0, len(self.__array)):
+                self.__static = []
+                for char in self.__array[x]:
+                    for y in range (0, len(self.__sort2)):
+                        if complex.up_down(char).down() == self.__sort2[y]:
+                            self.__static = complex.append(self.__static, y).concat()
+                self.__allstatic = complex.append(self.__allstatic, self.__static).concat()
+            return self.__allstatic
+
+
+    class up_down:
+        def __init__(self, char):
+            self.__char = char
+            self.__alpha = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
+            self.__z = True
+
+        def down(self):
+            for v in range(0, len(self.__alpha)):
+                if self.__alpha[v] == self.__char:
+                    if v > 26:
+                        self.__z = False
+                        return self.__alpha[v-26]
+            if self.__z == True:
+                return self.__char
+
+        def up(self):
+            for v in range(0, len(self.__alpha)):
+                if self.__alpha[v] == self.__char:
+                    if v < 27:
+                        self.__z = False
+                        return self.__alpha[v+26]
+            if self.__z == True:
+                return self.__char
 
     class delete:
         def __init__(self, array, pos):
@@ -2069,7 +2119,11 @@ class complex:
             return self.__array, self.__temp[self.__pos]
 
     class strip():
-        cont = True
+        def __init__(self, string):
+            self.__string = string
+        
+        def trail_lead(self):
+            cont = True
 
     class replace:
         def __init__(self, char, string):
@@ -2091,6 +2145,7 @@ class complex:
 #
 #
 #
+
 
 def loaddata():
     txts = ["Science.txt", "Agri.txt", "Arch.txt", "Business.txt", "Arts.txt", "Finance.txt", "Gov.txt", "Health.txt", "Hospit.txt", "Human.txt", "IT.txt", "Law.txt", "Manufact.txt", "Market.txt", "Transport.txt", "Edu.txt"]
@@ -2307,4 +2362,3 @@ both.home()
 
 tabcontrol.pack(expand=1, fill="both")
 window.mainloop()
-
