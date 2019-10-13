@@ -1994,6 +1994,13 @@ class job:
 
 class complex:
 
+    class ording:
+        def __init__(self, value):
+            self.__value = value
+        
+        def findord(self):
+            return ord(self.__value)
+
     class append:
         def __init__(self, array, value):
             self.__array = array # private access modifiers
@@ -2025,26 +2032,27 @@ class complex:
             self.__sort1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             self.__sort2 = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
             self.__static = []
-            self.__allstatic = []
+            self.__stat = [" "]*len(array)
             self.__test = False
 
         def nums(self):
             while self.__test == False:
                 self.__repeat = 0
-                for x in range(0, len(self.__array)-1):
-                    try:
-                        self.__num = self.__array[x]
-                        self.__num = int(self.__num)
-                        self.__num2 = self.__array[x+1]
-                        self.__num2 = int(self.__num2)
-                        if self.__num >= self.__num2:
-                            self.__array[x] = self.__num2
-                            self.__array[x+1] = self.__num
+                for y in range(0, len(self.__array)):
+                    for x in range(0, len(self.__array)):
+                        try:
+                            self.__num = self.__array[x]
+                            self.__num = int(self.__num)
+                            self.__num2 = self.__array[x+1]
+                            self.__num2 = int(self.__num2)
+                            if self.__num >= self.__num2:
+                                self.__array[x] = self.__num2
+                                self.__array[x+1] = self.__num
+                                self.__test = False
+                            else:
+                                self.__repeat = self.__repeat+1
+                        except:
                             self.__test = False
-                        else:
-                            self.__repeat = self.__repeat+1
-                    except:
-                        self.__test = False
                 self.__len = len(self.__array)/2
                 self.__len = int(self.__len)+1
                 if self.__repeat >= self.__len:
@@ -2052,15 +2060,24 @@ class complex:
             return self.__array
 
         def alpha(self):
-            for x in range(0, len(self.__array)):
-                self.__static = []
-                for char in self.__array[x]:
-                    for y in range (0, len(self.__sort2)):
-                        if complex.up_down(char).down() == self.__sort2[y]:
-                            self.__static = complex.append(self.__static, y).concat()
-                self.__allstatic = complex.append(self.__allstatic, self.__static).concat()
-            return self.__allstatic
-
+            for i in range(0, len(self.__array)):
+                self.__allnum = 0
+                for letter in self.__array[i]:
+                    self.__num = complex.ording(letter).findord()
+                    self.__allnum = self.__allnum + self.__num
+                self.__static = complex.append(self.__static, self.__allnum).concat()
+            print(self.__static)
+            self.__static = complex.sort(self.__static).nums()
+            print(self.__static)
+            for i in range(0, len(self.__array)):
+                self.__allnum = 0
+                for letter in self.__array[i]:
+                    self.__num = complex.ording(letter).findord()
+                    self.__allnum = self.__allnum + self.__num
+                for h in range(0, len(self.__static)):
+                    if self.__static[h] == self.__allnum:
+                        self.__stat = complex.append(self.__stat, self.__array[i]).insert(h)
+            return self.__stat
 
     class up_down:
         def __init__(self, char):
@@ -2108,7 +2125,7 @@ class complex:
                 self.__iter = self.__iter + 1
             return self.__newarray
 
-    class pop():
+    class pop:
         def __init__(self, array):
             self.__pos = len(array)-1
             self.__array = array
@@ -2118,12 +2135,27 @@ class complex:
             self.__array = complex.delete(self.__array, self.__pos)._del()
             return self.__array, self.__temp[self.__pos]
 
-    class strip():
+    class strip:
+        def __init__(self, string):
+            self.__string = str(string)
+            self.__set = True
+
+        def trailorfront(self):
+            return self.__string
+
+    class lencalc:
         def __init__(self, string):
             self.__string = string
-        
-        def trail_lead(self):
-            cont = True
+            self.__iter = 0
+
+        def calc(self):
+            try:
+                for char in self.__string:
+                    self.__iter = self.__iter + 1
+            except:
+                self.__string = str(self.__string)
+                self.__iter = complex.lencalc(self.__string).calc()
+            return self.__iter
 
     class replace:
         def __init__(self, char, string):
@@ -2141,11 +2173,13 @@ class complex:
                 skip = False
             return self.__newstring
 
-#
-#
-#
-#
-
+print(complex.lencalc("teest").calc())
+print(complex.lencalc(48).calc())
+print(complex.lencalc([2, 4, 2]).calc())
+print(complex.strip("teseet").trailorfront())
+print(complex.replace(" ", " helll o m y frien d s ! ").chars())
+print(complex.sort([333, 146, 621, 257, 742, 592, 153, 642]).nums())
+print(complex.sort(["Testing", "Test", "Best", "lest", "hi"]).alpha())
 
 def loaddata():
     txts = ["Science.txt", "Agri.txt", "Arch.txt", "Business.txt", "Arts.txt", "Finance.txt", "Gov.txt", "Health.txt", "Hospit.txt", "Human.txt", "IT.txt", "Law.txt", "Manufact.txt", "Market.txt", "Transport.txt", "Edu.txt"]
