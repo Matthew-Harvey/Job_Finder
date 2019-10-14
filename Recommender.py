@@ -410,12 +410,15 @@ class uni:
                 except:
                     cont = True
             new = old
-            print(new)
-            new.sort()
+            new = complex.sort(new).nums()
             newv2 = []
-            for y in range(0, len(new)):
-                if len(new[0]) == len(new[y]):
-                    newv2.append(new[y])
+            run = True
+            while run:
+                try:
+                    for h in range(0, 2000):
+                        newv2.append(str(new[h]))
+                except:
+                    run = False
             if len(newv2) > 3:
                 while len(newv2) > 3:
                     newv2.remove(newv2[len(newv2)-1])
@@ -1992,7 +1995,7 @@ class job:
 #
 #
 
-class complex:
+class complex: # replacing all possible in-built functions with calculations
 
     class ording:
         def __init__(self, value):
@@ -2173,12 +2176,7 @@ class complex:
                 skip = False
             return self.__newstring
 
-print(complex.lencalc("teest").calc())
-print(complex.lencalc(48).calc())
-print(complex.lencalc([2, 4, 2]).calc())
 print(complex.strip("teseet").trailorfront())
-print(complex.replace(" ", " helll o m y frien d s ! ").chars())
-print(complex.sort([333, 146, 621, 257, 742, 592, 153, 642]).nums())
 print(complex.sort(["Testing", "Test", "Best", "lest", "hi"]).alpha())
 
 def loaddata():
