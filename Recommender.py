@@ -24,15 +24,19 @@ class HoverButton(tk.Button):
         self['background'] = self.defaultBackground
 
 class both:
-    def home(self):
-            tab0 = ttk.Frame(tabcontrol)
-            tabcontrol.add(tab0, text="HOME")
-            tabcontrol.select(tab0)
-            HoverButton(tab0, height = 10, width = 30 , activebackground='black', fg="white", bg="red", text="UNIVERSITY", command = lambda: [both.closetab(tab0), uni.unimenu()]).grid(row=1)
-            HoverButton(tab0, height = 10, width = 30 , activebackground='black', fg="white", bg="blue", text="FIND JOBS", command = lambda: [both.closetab(tab0), job.mainmenu()]).grid(row=1, column=1)
+    class home:
+        def __init__(self):
+            self.__tab0 = ttk.Frame(tabcontrol)
+            both.home.make(self)
+        
+        def make(self):
+            tabcontrol.add(self.__tab0, text="HOME")
+            tabcontrol.select(self.__tab0)
+            HoverButton(self.__tab0, height = 10, width = 30 , activebackground='black', fg="white", bg="red", text="UNIVERSITY", command = lambda: [both.closetab(self.__tab0), uni.unimenu()]).grid(row=1)
+            HoverButton(self.__tab0, height = 10, width = 30 , activebackground='black', fg="white", bg="blue", text="FIND JOBS", command = lambda: [both.closetab(self.__tab0), job.mainmenu()]).grid(row=1, column=1)
 
     def closetab(self, result_tab):
-            result_tab.destroy()
+        result_tab.destroy()
 
     def hash_password(self, password):
         salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
@@ -2033,10 +2037,12 @@ class complex: # replacing all possible in-built functions with calculations
         def __init__(self, array):
             self.__array = array
             self.__sort1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            self.__sort2 = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
+            self.__sort2 = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
             self.__static = []
-            self.__stat = [" "]*len(array)
+            self.__allstatic = []
+            self.__final = []
             self.__test = False
+            self.__rep = []
 
         def nums(self):
             while self.__test == False:
@@ -2063,24 +2069,31 @@ class complex: # replacing all possible in-built functions with calculations
             return self.__array
 
         def alpha(self):
-            for i in range(0, len(self.__array)):
-                self.__allnum = 0
-                for letter in self.__array[i]:
-                    self.__num = complex.ording(letter).findord()
-                    self.__allnum = self.__allnum + self.__num
-                self.__static = complex.append(self.__static, self.__allnum).concat()
-            print(self.__static)
-            self.__static = complex.sort(self.__static).nums()
-            print(self.__static)
-            for i in range(0, len(self.__array)):
-                self.__allnum = 0
-                for letter in self.__array[i]:
-                    self.__num = complex.ording(letter).findord()
-                    self.__allnum = self.__allnum + self.__num
-                for h in range(0, len(self.__static)):
-                    if self.__static[h] == self.__allnum:
-                        self.__stat = complex.append(self.__stat, self.__array[i]).insert(h)
-            return self.__stat
+            for word in self.__array:
+                self.__static = []
+                for letter in word:
+                    for y in range(0, len(self.__sort2)):
+                        if self.__sort2[y] == letter:
+                            self.__static.append(int(y))
+                self.__allstatic.append(self.__static)
+            self.__one = []
+            for c in range(0, len(self.__allstatic)):
+                self.__one.append(self.__allstatic[c][0])
+            self.__one = complex.sort(self.__one).nums()
+            for u in range(0, len(self.__one)):
+                for h in range(0, len(self.__allstatic)):
+                    if self.__allstatic[h][0] == self.__one[u]:
+                        if self.__array[h] not in self.__final:
+                            self.__final.append(self.__array[h])
+                        else:
+                            runsecond = True
+                            self.__rep.append(self.__array[h])
+            if runsecond == True:
+                cont = True # only currently alphabets on first letter
+                for word in self.__rep:
+                    cont = True
+                
+            return self.__final
 
     class up_down:
         def __init__(self, char):
@@ -2176,8 +2189,9 @@ class complex: # replacing all possible in-built functions with calculations
                 skip = False
             return self.__newstring
 
+print(complex.lencalc(3536).calc())
 print(complex.strip("teseet").trailorfront())
-print(complex.sort(["Testing", "Test", "Best", "lest", "hi"]).alpha())
+print(complex.sort(["abcs", "poP", "q", "Queen", "strong", "tuple", "poop", "aBcd", "wow"]).alpha())
 
 def loaddata():
     txts = ["Science.txt", "Agri.txt", "Arch.txt", "Business.txt", "Arts.txt", "Finance.txt", "Gov.txt", "Health.txt", "Hospit.txt", "Human.txt", "IT.txt", "Law.txt", "Manufact.txt", "Market.txt", "Transport.txt", "Edu.txt"]
