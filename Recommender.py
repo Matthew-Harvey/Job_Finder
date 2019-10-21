@@ -38,69 +38,134 @@ class both:
     def closetab(self, result_tab):
         result_tab.destroy()
 
-    def hash_password(self, password):
-        salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
-        pwdhash = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'), salt, 100000)
-        pwdhash = binascii.hexlify(pwdhash)
-        return (salt + pwdhash).decode('ascii')
-        
-    def verify_password(self, stored_password, provided_password):
-        salt = stored_password[:64]
-        stored_password = stored_password[64:]
-        pwdhash = hashlib.pbkdf2_hmac('sha512', provided_password.encode('utf-8'), salt.encode('ascii'), 100000)
-        pwdhash = binascii.hexlify(pwdhash).decode('ascii')
-        return pwdhash == stored_password
+    class hash_password:
+        def __init__(self, password):
+            self.__password = password
+            self.__salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
 
-    def login(self, attempts, tab1, IDENTentry, Passwordentry, uniorjob):
-        IDENT_insert = IDENTentry.get()
-        PIN_insert = Passwordentry.get()
+        def hashed(self):
+            self.__pwdhash = hashlib.pbkdf2_hmac('sha512', self.__password.encode('utf-8'), self.__salt, 100000)
+            self.__pwdhash = binascii.hexlify(self.__pwdhash)
+            return (self.__salt + self.__pwdhash).decode('ascii')
+
+    class verify_password:
+        def __init__(self, stored_password, provided_password):
+            self.__salt = stored_password[:64]
+            self.__stored_password = stored_password[64:]
+            self.__provided_password = provided_password
+
+        def verify(self):
+            self.__pwdhash = hashlib.pbkdf2_hmac('sha512', self.__provided_password.encode('utf-8'), self.__salt.encode('ascii'), 100000)
+            self.__pwdhash = binascii.hexlify(self.__pwdhash).decode('ascii')
+            return self.__pwdhash == self.__stored_password
+
+    class login:
+        def __init__(self, attempts, IDENTentry, Passwordentry, uniorjob):
+            IDENT_insert = IDENTentry.get()
+            PIN_insert = Passwordentry.get()
+            self.__IDENT_insert = IDENT_insert
+            self.__PIN_insert = PIN_insert
+            self.__uniorjob = uniorjob
+
+        def main(self, tab1):
+            self.__tab1 = tab1
+            handle = sql.connect("RecommendDATA.db")
+            cursor = handle.cursor()
+            cursor.execute("SELECT USERS.USERID FROM USERS")
+            self.__ids = cursor.fetchall()
+            handle.commit()
+            idsclean = []
+            for x in range(0, len(self.__ids)):
+                a = str(self.__ids[x])
+                b = a.strip('(),/\'')
+                idsclean.append(b)
+            ids = idsclean
+            k = 0
+            for x in range(0, len(ids)):
+                if ids[x] == self.__IDENT_insert:
+                    cursor.execute("SELECT USERS.PASSWORD FROM USERS WHERE USERS.USERID = ?", (self.__IDENT_insert,))
+                    PINrecieved = cursor.fetchall()
+                    handle.commit()
+                    PINrecieved = PINrecieved[0]
+                    PINrecieved = str(PINrecieved)
+                    PINrecieved = PINrecieved.strip("/'(),'")
+                    TrueorFalse = both.verify_password(PINrecieved, self.__PIN_insert).verify()
+                    if TrueorFalse == True:
+                        both.changelogin(self.__tab1, self.__IDENT_insert, self.__PIN_insert, self.__uniorjob)
+                        k = 8
+            self.__tab1.destroy()
+            if k != 8:
+                errorlogin = ttk.Frame(tabcontrol)
+                tabcontrol.add(errorlogin, text="INVALID")
+                tk.Label(errorlogin, text="ID or  Password is incorrect", font="Ariel 15 bold italic", fg="blue").grid(row=1)
+                HoverButton(errorlogin, text="Back to Main Menu", activebackground='blue', fg="white", bg="black", command= lambda: [both.closetab(errorlogin), job.mainmenu()]).grid(row=2)
+
+    class changelogin:
+        def __init__(self, tab1, IDENT_insert, PIN_insert, uniorjob):
+            tab1.destroy()
+            #give option to change details (other than id/password)
+            tab4 = ttk.Frame(tabcontrol)
+            tabcontrol.add(tab4, text="Step 2")
+            tabcontrol.select(tab4)
+            ID_insert = IDENT_insert
+            HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="edit your data", command = lambda: both.changingdata(ID_insert, PIN_insert, tab4, uniorjob)).grid(row=1)
+            if uniorjob == False:
+                HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Find Personalised Reccomendations", command = lambda: job.fieldq(ID_insert, tab4)).grid(row=2)
+                HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Home", command = lambda: [job.mainmenu(), both.closetab(tab4)]).grid(row=4)
+            elif uniorjob == True:
+                HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Find Personalised Reccomendations", command = lambda: uni.uni_quals(ID_insert, tab4)).grid(row=2)
+                HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Home", command = lambda: [uni.unimenu(), both.closetab(tab4)]).grid(row=4)
+            HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="View All Previous Recommendations", command = lambda: [both.viewing_all(ID_insert, PIN_insert,uniorjob), both.closetab(tab4)]).grid(row=3)
+
+    def viewing_all(self, ID_insert, PIN_insert, uniorjob):
         handle = sql.connect("RecommendDATA.db")
         cursor = handle.cursor()
-        cursor.execute("SELECT USERS.USERID FROM USERS")
-        ids = cursor.fetchall()
+        cursor.execute("SELECT JOBID FROM RECOMMEND WHERE USERID = ? AND USERID > ?;", (ID_insert, "0"))
+        userinfo = cursor.fetchall()
         handle.commit()
-        idsclean = []
-        for x in range(0, len(ids)):
-            a = str(ids[x])
-            b = a.strip('(),/\'')
-            idsclean.append(b)
-        ids = idsclean
-        i = 0
-        k = 0
-        for x in range(0, len(ids)):
-            if ids[i] == IDENT_insert:
-                cursor.execute("SELECT USERS.PASSWORD FROM USERS WHERE USERS.USERID = ?", (IDENT_insert,))
-                PINrecieved = cursor.fetchall()
-                handle.commit()
-                PINrecieved = PINrecieved[0]
-                PINrecieved = str(PINrecieved)
-                PINrecieved = PINrecieved.strip("/'(),'")
-                TrueorFalse = both.verify_password(PINrecieved, PIN_insert)
-                if TrueorFalse == True:
-                    both.changelogin(tab1, IDENT_insert, PIN_insert, uniorjob)
-                    k = 8
-            i = i+1
-        attempt=attempts+1
-        # incorrect entry tab with a back to main menu button
-        tab1.destroy()
-        if k != 8:
-            errorlogin = ttk.Frame(tabcontrol)
-            tabcontrol.add(errorlogin, text="INVALID")
-            tk.Label(errorlogin, text="ID or Password is incorrect", font="Ariel 15 bold italic", fg="blue").grid(row=1)
-            HoverButton(errorlogin, text="Back to Main Menu", activebackground='blue', fg="white", bg="black", command= lambda: [both.closetab(errorlogin), job.mainmenu()]).grid(row=2)
-            
-    def changelogin(self, tab1, IDENT_insert, PIN_insert, uniorjob):
-        tab1.destroy()
-        #give option to change details (other than id/password)
+        handle.close()
+        nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        newarr = []
+        for string in userinfo:
+            string = str(string)
+            newstr = ""
+            for char in string:
+                try:
+                    char = int(char)
+                except:
+                    char = char
+                for num in nums:
+                    if num == char:
+                        char = str(char)
+                        newstr = newstr + char
+            newstr = int(newstr)
+            newarr.append(newstr)
+        handle = sql.connect("RecommendDATA.db")
+        cursor = handle.cursor()
+        allnames = []
+        for integer in newarr:
+            cursor.execute("SELECT JOBNAME FROM JOBS WHERE JOBID = ? AND JOBID > ?;", (integer, "0"))
+            userinfo = cursor.fetchall()
+            handle.commit()
+            userinfo = str(userinfo)
+            userinfo = userinfo[3:len(userinfo)-6]
+            if userinfo not in allnames:
+                allnames.append(userinfo)
+        handle.close()
+        c = 1
         tab4 = ttk.Frame(tabcontrol)
-        tabcontrol.add(tab4, text="Step 2")
+        tabcontrol.add(tab4, text="Recommendations")
         tabcontrol.select(tab4)
-        ID_insert = IDENT_insert
-        HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="edit your data", command = lambda: both.changingdata(ID_insert, PIN_insert, tab4, uniorjob)).grid(row=1)
-        if uniorjob == False:
-            HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Find Personalised Reccomendations", command = lambda: job.fieldq(ID_insert, tab4)).grid(row=2)
-        elif uniorjob == True:
-            HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Find Personalised Reccomendations", command = lambda: uni.uni_quals(ID_insert, tab4)).grid(row=2)
+        varc = StringVar()
+        varc.set(allnames[random.randint(0, len(allnames)-1)])
+        OptionMenu(tab4 , varc, *allnames).grid(row=c+3)
+        HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Enter", command = lambda: [both.getvar(varc), both.closetab(tab4)]).grid(row=c+3, column=1)
+        tab1= ttk.Frame(tabcontrol)
+        HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.changelogin(tab1, ID_insert, PIN_insert, uniorjob), both.closetab(tab4)]).grid(row=c+4)
+
+    def getvar(self, var):
+        var = var.get()
+        job.display(var)
 
     def changingdata(self, ID_insert, PIN_insert, tab4, uniorjob):
         tab4.destroy()
@@ -187,7 +252,7 @@ class both:
             while len(Password_insert) < 6:
                 Password_insert = Password_insert+"_"
             Password_insert = str(Password_insert)
-            Password_insert1 = both.hash_password(Password_insert)
+            Password_insert1 = both.hash_password(Password_insert).hashed()
             if username_insert == "":
                 username_insert = "NULL"
             if current_insert == "":
@@ -321,7 +386,7 @@ class uni:
         Passwordentry.insert(END, "Password")
         Passwordentry.grid(row=12+1, column=1)
         #resetpin = tk.Button(tab1, text="FORGOT PIN", command = lambda: reset()).grid(row=7, column=3)
-        HoverButton(tab0, activebackground='red', fg="white", bg="red", text="ENTER", command= lambda: both.login(attempts, tab0, IDENTentry, Passwordentry, uniorjob)).grid(row=13+1, column=1)
+        HoverButton(tab0, activebackground='red', fg="white", bg="red", text="ENTER", command= lambda: both.login(attempts, IDENTentry, Passwordentry, uniorjob).main(tab0)).grid(row=13+1, column=1)
         tk.Label(tab0, text=" ").grid(row=14+1)
         tk.Label(tab0, text="NEW USER:", font="Ariel 15 bold italic", fg="red").grid(row=15+1, column=1)
         IDentry = tk.Entry(tab0)
@@ -719,7 +784,7 @@ class job:
         Passwordentry.insert(END, "Password")
         Passwordentry.grid(row=12+1, column=1)
         #resetpin = tk.Button(tab1, text="FORGOT PIN", command = lambda: reset()).grid(row=7, column=3)
-        HoverButton(tab1, activebackground='black', fg="white", bg="blue", text="ENTER", command= lambda: both.login(attempts, tab1, IDENTentry, Passwordentry, uniorjob)).grid(row=13+1, column=1)
+        HoverButton(tab1, activebackground='black', fg="white", bg="blue", text="ENTER", command= lambda: both.login(attempts, IDENTentry, Passwordentry, uniorjob).main(tab1)).grid(row=13+1, column=1)
         tk.Label(tab1, text=" ").grid(row=14+1)
         tk.Label(tab1, text="NEW USER:", font="Ariel 15 bold italic", fg="blue").grid(row=15+1, columnspan=3)
         IDentry = tk.Entry(tab1)
@@ -2035,6 +2100,7 @@ class complex: # replacing all possible in-built functions with calculations
 
     class sort:
         def __init__(self, array):
+            self.__count = 0
             self.__array = array
             self.__sort1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
             self.__sort2 = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
@@ -2068,6 +2134,15 @@ class complex: # replacing all possible in-built functions with calculations
                     self.__test = True
             return self.__array
 
+        def sec(self):
+            for word in self.__rep:
+                first = word[0]
+                for arr in self.__final:
+                    if first == arr[0]:
+                        self.__rep.append(arr)
+            self.__rep = complex.sort(self.__rep).alpha()
+            return self.__final
+
         def alpha(self):
             for word in self.__array:
                 self.__static = []
@@ -2088,13 +2163,10 @@ class complex: # replacing all possible in-built functions with calculations
                         else:
                             runsecond = True
                             self.__rep.append(self.__array[h])
-            if runsecond == True:
-                cont = True # only currently alphabets on first letter
-                for word in self.__rep:
-                    cont = True
+            if runsecond == True and self.__count == 0:
+                self.__count = self.__count + 1
+                self.__log = complex.sort(self.__final).sec()
                 
-            return self.__final
-
     class up_down:
         def __init__(self, char):
             self.__char = char
@@ -2191,7 +2263,7 @@ class complex: # replacing all possible in-built functions with calculations
 
 print(complex.lencalc(3536).calc())
 print(complex.strip("teseet").trailorfront())
-print(complex.sort(["abcs", "poP", "q", "Queen", "strong", "tuple", "poop", "aBcd", "wow"]).alpha())
+#print(complex.sort(["abcs", "poP", "q", "Queen", "strong", "tuple", "poop", "aBcd", "wow"]).alpha())
 
 def loaddata():
     txts = ["Science.txt", "Agri.txt", "Arch.txt", "Business.txt", "Arts.txt", "Finance.txt", "Gov.txt", "Health.txt", "Hospit.txt", "Human.txt", "IT.txt", "Law.txt", "Manufact.txt", "Market.txt", "Transport.txt", "Edu.txt"]
@@ -2378,7 +2450,7 @@ def getskillslist():
         count=count+1
         iterate = iterate+1
 
-try:   
+try:
     handle = sql.connect("RecommendDATA.db")
     cursor = handle.cursor()
     cursor.execute("CREATE TABLE RANKINGS(UNI_ID INT, UNINAME TEXT, RANK TEXT)")
@@ -2388,6 +2460,7 @@ try:
     cursor.execute("CREATE TABLE RATINGS(JOBID INT, RATING INT, COMMENT TEXT)")
     cursor.execute("CREATE TABLE WEBLIST(WEBID INT, WEBURL TEXT)")
     cursor.execute("CREATE TABLE RECOMMEND(JOBID, USERID)")
+    cursor.execute("CREATE TABLE RECOMMEND2(UNIID, USERID)")
     cursor.execute("CREATE TABLE USER_RECOMMENDATIONS(JOBNAME TEXT, DESCRIPTION TEXT, FIELD TEXT)")
     handle.commit()
     handle.close()
