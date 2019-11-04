@@ -10,6 +10,8 @@ import os
 import binascii
 import random
 
+import in_built as built
+
 class HoverButton(tk.Button):
     def __init__(self, master, **kw):
         tk.Button.__init__(self,master=master,**kw)
@@ -118,54 +120,101 @@ class both:
             HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="View All Previous Recommendations", command = lambda: [both.viewing_all(ID_insert, PIN_insert,uniorjob), both.closetab(tab4)]).grid(row=3)
 
     def viewing_all(self, ID_insert, PIN_insert, uniorjob):
-        handle = sql.connect("RecommendDATA.db")
-        cursor = handle.cursor()
-        cursor.execute("SELECT JOBID FROM RECOMMEND WHERE USERID = ? AND USERID > ?;", (ID_insert, "0"))
-        userinfo = cursor.fetchall()
-        handle.commit()
-        handle.close()
-        nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        newarr = []
-        for string in userinfo:
-            string = str(string)
-            newstr = ""
-            for char in string:
-                try:
-                    char = int(char)
-                except:
-                    char = char
-                for num in nums:
-                    if num == char:
-                        char = str(char)
-                        newstr = newstr + char
-            newstr = int(newstr)
-            newarr.append(newstr)
-        handle = sql.connect("RecommendDATA.db")
-        cursor = handle.cursor()
-        allnames = []
-        for integer in newarr:
-            cursor.execute("SELECT JOBNAME FROM JOBS WHERE JOBID = ? AND JOBID > ?;", (integer, "0"))
-            userinfo = cursor.fetchall()
-            handle.commit()
-            userinfo = str(userinfo)
-            userinfo = userinfo[3:len(userinfo)-6]
-            if userinfo not in allnames:
-                allnames.append(userinfo)
-        handle.close()
-        c = 1
         tab4 = ttk.Frame(tabcontrol)
         tabcontrol.add(tab4, text="Recommendations")
         tabcontrol.select(tab4)
-        varc = StringVar()
-        varc.set(allnames[random.randint(0, len(allnames)-1)])
-        OptionMenu(tab4 , varc, *allnames).grid(row=c+3)
-        HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Enter", command = lambda: [both.getvar(varc), both.closetab(tab4)]).grid(row=c+3, column=1)
-        tab1= ttk.Frame(tabcontrol)
-        HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.changelogin(tab1, ID_insert, PIN_insert, uniorjob), both.closetab(tab4)]).grid(row=c+4)
+        try:
+            handle = sql.connect("RecommendDATA.db")
+            cursor = handle.cursor()
+            cursor.execute("SELECT JOBID FROM RECOMMEND WHERE USERID = ? AND USERID > ?;", (ID_insert, "0"))
+            userinfo = cursor.fetchall()
+            handle.commit()
+            handle.close()
+            nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            newarr = []
+            for string in userinfo:
+                string = str(string)
+                newstr = ""
+                for char in string:
+                    try:
+                        char = int(char)
+                    except:
+                        char = char
+                    for num in nums:
+                        if num == char:
+                            char = str(char)
+                            newstr = newstr + char
+                newstr = int(newstr)
+                newarr.append(newstr)
+            handle = sql.connect("RecommendDATA.db")
+            cursor = handle.cursor()
+            allnames = []
+            for integer in newarr:
+                cursor.execute("SELECT JOBNAME FROM JOBS WHERE JOBID = ? AND JOBID > ?;", (integer, "0"))
+                userinfo = cursor.fetchall()
+                handle.commit()
+                userinfo = str(userinfo)
+                userinfo = userinfo[3:len(userinfo)-6]
+                if userinfo not in allnames:
+                    allnames.append(userinfo)
+            handle.close()
+            varc = StringVar()
+            varc.set(allnames[random.randint(0, len(allnames)-1)])
+            OptionMenu(tab4 , varc, *allnames).grid(row=1)
+            HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Enter", command = lambda: [both.getvar(varc), both.closetab(tab4)]).grid(row=1, column=1)
+        except:
+            cont = True
+        try:
+            handle = sql.connect("RecommendDATA.db")
+            cursor = handle.cursor()
+            cursor.execute("SELECT UNIID FROM RECOMMEND2 WHERE USERID = ? AND USERID > ?;", (ID_insert, "0"))
+            userinfo = cursor.fetchall()
+            handle.commit()
+            handle.close()
+            nums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+            newarr = []
+            for string in userinfo:
+                string = str(string)
+                newstr = ""
+                for char in string:
+                    try:
+                        char = int(char)
+                    except:
+                        char = char
+                    for num in nums:
+                        if num == char:
+                            char = str(char)
+                            newstr = newstr + char
+                newstr = int(newstr)
+                newarr.append(newstr)
+            handle = sql.connect("RecommendDATA.db")
+            cursor = handle.cursor()
+            allnames = []
+            for integer in newarr:
+                cursor.execute("SELECT UNINAME FROM RANKINGS WHERE UNI_ID = ? AND UNI_ID > ?;", (integer, "0"))
+                userinfo = cursor.fetchall()
+                handle.commit()
+                userinfo = str(userinfo)
+                userinfo = userinfo[3:len(userinfo)-4]
+                if userinfo not in allnames:
+                    allnames.append(userinfo)
+            handle.close()
+            vara = StringVar()
+            vara.set(allnames[random.randint(0, len(allnames)-1)])
+            OptionMenu(tab4 , vara, *allnames).grid(row=2)
+            HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Enter", command = lambda: [both.getvar2(vara), both.closetab(tab4)]).grid(row=2, column=1)
+        except:
+            cont = True
+        tab1 = ttk.Frame(tabcontrol)
+        HoverButton(tab4, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.changelogin(tab1, ID_insert, PIN_insert, uniorjob), both.closetab(tab4)]).grid(row=4)
 
     def getvar(self, var):
         var = var.get()
         job.display(var)
+
+    def getvar2(self, var):
+        var = var.get()
+        uni.display_uni(var)
 
     def changingdata(self, ID_insert, PIN_insert, tab4, uniorjob):
         tab4.destroy()
@@ -479,7 +528,7 @@ class uni:
                 except:
                     cont = True
             new = old
-            new = complex.sort(new).nums()
+            new = built.complex.sort(new).nums()
             newv2 = []
             run = True
             while run:
@@ -497,8 +546,30 @@ class uni:
                     if newv2[r] == temp[p]:
                         final.append(entry[p])
             for r in range(0, len(final)):
-                uniname = final[r]
-                uni.display_uni(uniname)
+                handle = sql.connect("RecommendDATA.db")
+                cursor = handle.cursor()
+                cursor.execute("SELECT UNI_ID FROM RANKINGS WHERE UNINAME = ? AND UNI_ID > ?", (final[r], 0))
+                ID = cursor.fetchall()
+                handle.commit()
+                ID = str(ID)
+                ID = ID[2:len(ID)-3]
+                cursor.execute("INSERT INTO RECOMMEND2 VALUES(?,?)", (ID, ID_insert))
+                handle.commit()
+                handle.close()
+                uni.display_uni(final[r])
+        else:
+            for x in range(0, len(entry)-1):
+                handle = sql.connect("RecommendDATA.db")
+                cursor = handle.cursor()
+                cursor.execute("SELECT UNI_ID FROM RANKINGS WHERE UNINAME = ? AND UNI_ID > ?", (entry[x], 0))
+                ID = cursor.fetchall()
+                ID = str(ID)
+                ID = ID[2:len(ID)-3]
+                handle.commit()
+                cursor.execute("INSERT INTO RECOMMEND2 VALUES(?,?)", (ID, ID_insert))
+                handle.commit()
+                handle.close()
+                uni.display_uni(entry[x])
             
     def overallranking(self):
         url= "https://www.thecompleteuniversityguide.co.uk/league-tables/rankings"
@@ -577,7 +648,7 @@ class uni:
         if len(unis) > 3:
             while len(unis) > 3:
                 unis.remove(unis[len(unis)-1])
-        for r in range(0, len(uni)):
+        for r in range(0, len(unis)):
             uniname = unis[r]
             uni.display_uni(uniname)
             
@@ -717,6 +788,7 @@ class uni:
         except:
             cont= True
         for i in range(0, len(names)-1):
+            print(names[i])
             names[i] = names[i][:len(names[i])-1]
             uniname = names[i]
             uniname = uniname.lower()
@@ -725,6 +797,7 @@ class uni:
             uniname = uniname.replace(" ", "-")
             url = "https://www.thecompleteuniversityguide.co.uk/$/performance"
             url = url.replace("$", uniname)
+            print(url)
             try:
                 from bs4 import BeautifulSoup
                 import requests
@@ -738,12 +811,14 @@ class uni:
                 ranks = ranks.strip()
             except:
                 ranks = ""
+            print(ranks)
             try:
                 entrypoint = soup.find("span", class_="league-table-score-value")
             except:
                 entrypoint= ""
             entrypoint = str(entrypoint)
             entrypoint = re.sub("[^0-9]", "", entrypoint)
+            print(entrypoint)
             handle = sql.connect("RecommendDATA.db")
             cursor = handle.cursor()
             cursor.execute("INSERT INTO UNIENTRY VALUES(?,?,?)", (i, names[i], entrypoint))
@@ -1375,7 +1450,7 @@ class job:
         tabcontrol.select(result_tab)
         tk.Label(result_tab, text ="Description: ").grid(row=1)
         tk.Label(result_tab, text =descript).grid(row=2)
-        HoverButton(result_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(result_tab), job.display(job_name)]).grid(row=20, column=1)
+        HoverButton(result_tab, activebackground='blue', fg="white", bg="black", text="Back", command = lambda: [both.closetab(result_tab)]).grid(row=20, column=1)
         
     def RECtemplate(self, job_name, result_tab, field, descript, skills, salary):
         try:
@@ -2064,207 +2139,6 @@ class job:
 #
 #
 
-class complex: # replacing all possible in-built functions with calculations
-
-    class ording:
-        def __init__(self, value):
-            self.__value = value
-        
-        def findord(self):
-            return ord(self.__value)
-
-    class append:
-        def __init__(self, array, value):
-            self.__array = array # private access modifiers
-            self.__value = value
-
-        def concat(self):
-            self.__array = self.__array + [self.__value]
-            return self.__array
-
-        def insert(self, pos):
-            self.__postition = pos
-            self.__array = self.__array[:pos] + [self.__value] + self.__array[pos:]
-            return self.__array
-
-    class randomint:
-        def __init__(self, min, max):
-            self.__min = min
-            self.__max = max
-            self.__allvalues = []
-
-        def calculate(self):
-            for x in range(self.__min, self.__max):
-                self.__allvalues = complex.append(self.__allvalues, x).concat()
-            return self.__allvalues[random.randint(self.__min, self.__max)]
-
-    class sort:
-        def __init__(self, array):
-            self.__count = 0
-            self.__array = array
-            self.__sort1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-            self.__sort2 = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-            self.__static = []
-            self.__allstatic = []
-            self.__final = []
-            self.__test = False
-            self.__rep = []
-
-        def nums(self):
-            while self.__test == False:
-                self.__repeat = 0
-                for y in range(0, len(self.__array)):
-                    for x in range(0, len(self.__array)):
-                        try:
-                            self.__num = self.__array[x]
-                            self.__num = int(self.__num)
-                            self.__num2 = self.__array[x+1]
-                            self.__num2 = int(self.__num2)
-                            if self.__num >= self.__num2:
-                                self.__array[x] = self.__num2
-                                self.__array[x+1] = self.__num
-                                self.__test = False
-                            else:
-                                self.__repeat = self.__repeat+1
-                        except:
-                            self.__test = False
-                self.__len = len(self.__array)/2
-                self.__len = int(self.__len)+1
-                if self.__repeat >= self.__len:
-                    self.__test = True
-            return self.__array
-
-        def sec(self):
-            for word in self.__rep:
-                first = word[0]
-                for arr in self.__final:
-                    if first == arr[0]:
-                        self.__rep.append(arr)
-            self.__rep = complex.sort(self.__rep).alpha()
-            return self.__final
-
-        def alpha(self):
-            for word in self.__array:
-                self.__static = []
-                for letter in word:
-                    for y in range(0, len(self.__sort2)):
-                        if self.__sort2[y] == letter:
-                            self.__static.append(int(y))
-                self.__allstatic.append(self.__static)
-            self.__one = []
-            for c in range(0, len(self.__allstatic)):
-                self.__one.append(self.__allstatic[c][0])
-            self.__one = complex.sort(self.__one).nums()
-            for u in range(0, len(self.__one)):
-                for h in range(0, len(self.__allstatic)):
-                    if self.__allstatic[h][0] == self.__one[u]:
-                        if self.__array[h] not in self.__final:
-                            self.__final.append(self.__array[h])
-                        else:
-                            runsecond = True
-                            self.__rep.append(self.__array[h])
-            if runsecond == True and self.__count == 0:
-                self.__count = self.__count + 1
-                self.__log = complex.sort(self.__final).sec()
-                
-    class up_down:
-        def __init__(self, char):
-            self.__char = char
-            self.__alpha = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"]
-            self.__z = True
-
-        def down(self):
-            for v in range(0, len(self.__alpha)):
-                if self.__alpha[v] == self.__char:
-                    if v > 26:
-                        self.__z = False
-                        return self.__alpha[v-26]
-            if self.__z == True:
-                return self.__char
-
-        def up(self):
-            for v in range(0, len(self.__alpha)):
-                if self.__alpha[v] == self.__char:
-                    if v < 27:
-                        self.__z = False
-                        return self.__alpha[v+26]
-            if self.__z == True:
-                return self.__char
-
-    class delete:
-        def __init__(self, array, pos):
-            self.__pos = pos
-            self.__array = array
-        
-        def _del(self):
-            self.__array = self.__array[:self.__pos] + self.__array[self.__pos+1:]
-            return self.__array
-
-    class reverse:
-        def __init__(self, array):
-            self.__array = array
-            self.__newarray = []
-            self.__len = len(array)
-            self.__iter = 1
-
-        def swap(self):
-            for item in self.__array:
-                self.__newarray = complex.append(self.__newarray, self.__array[self.__len - self.__iter]).concat()
-                self.__iter = self.__iter + 1
-            return self.__newarray
-
-    class pop:
-        def __init__(self, array):
-            self.__pos = len(array)-1
-            self.__array = array
-            self.__temp = array
-        
-        def last(self):
-            self.__array = complex.delete(self.__array, self.__pos)._del()
-            return self.__array, self.__temp[self.__pos]
-
-    class strip:
-        def __init__(self, string):
-            self.__string = str(string)
-            self.__set = True
-
-        def trailorfront(self):
-            return self.__string
-
-    class lencalc:
-        def __init__(self, string):
-            self.__string = string
-            self.__iter = 0
-
-        def calc(self):
-            try:
-                for char in self.__string:
-                    self.__iter = self.__iter + 1
-            except:
-                self.__string = str(self.__string)
-                self.__iter = complex.lencalc(self.__string).calc()
-            return self.__iter
-
-    class replace:
-        def __init__(self, char, string):
-            self.__string = string
-            self.__char = char
-            self.__newstring = ""
-        
-        def chars(self):
-            skip = False
-            for letter in self.__string:
-                if letter == self.__char:
-                    skip = True
-                if skip == False:
-                    self.__newstring = self.__newstring + letter
-                skip = False
-            return self.__newstring
-
-print(complex.lencalc(3536).calc())
-print(complex.strip("teseet").trailorfront())
-#print(complex.sort(["abcs", "poP", "q", "Queen", "strong", "tuple", "poop", "aBcd", "wow"]).alpha())
-
 def loaddata():
     txts = ["Science.txt", "Agri.txt", "Arch.txt", "Business.txt", "Arts.txt", "Finance.txt", "Gov.txt", "Health.txt", "Hospit.txt", "Human.txt", "IT.txt", "Law.txt", "Manufact.txt", "Market.txt", "Transport.txt", "Edu.txt"]
     counttxt = 0
@@ -2464,6 +2338,7 @@ try:
     cursor.execute("CREATE TABLE USER_RECOMMENDATIONS(JOBNAME TEXT, DESCRIPTION TEXT, FIELD TEXT)")
     handle.commit()
     handle.close()
+    uni = uni()
     uni.getucaspoints()
     fieldlist = loaddata()
     getskillslist()
@@ -2471,13 +2346,14 @@ except:
     cont = True
 
 #create main menu upon staring program
-window=tk.Tk()
-window.title("JOB FINDER")
-tabcontrol = ttk.Notebook(window)
-both = both()
-uni = uni()
-job = job()
-both.home()
+if __name__ == "__main__":
+    window=tk.Tk()
+    window.title("JOB FINDER")
+    tabcontrol = ttk.Notebook(window)
+    both = both()
+    uni = uni()
+    job = job()
+    both.home()
 
-tabcontrol.pack(expand=1, fill="both")
-window.mainloop()
+    tabcontrol.pack(expand=1, fill="both")
+    window.mainloop()
