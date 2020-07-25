@@ -1,0 +1,39 @@
+ 
+data needed
+
+Average Rating
+Number of Recommendations
+
+Mean Average Rating
+Mean Number of Recommendations
+
+Weighted Rating (WR) = (v/v+m.R)+(m/v+m.C)
+
+m = mean Number of Recommendations
+v = Number of Recommendations
+C = Average Rating
+R = Mean Average Rating
+
+Use Weighted rating in an arr alongside the jobid such as [1.423, 234] and [2.433, 213]
+
+Total Euclidean distance used:
+
+eg.
+(((1.423-2.433)**2)+((234-213)**2))**0.5
+
+This gives distance between the all other points.  new array is [1.423, 294942]
+
+
+Using Pearson's coefficent to find the correlation between all points in turn at all combinations, a closer to x score is preferred.
+The recommendation feedback button will determine x by users saying if recommendation is good, keep x.
+If negative, the x value will be shifted +0.00005 and -0.00005, hence closer to 0.001 or -0.001 is then prefered over 0.
+If the result is postive, the system will move the value aimed back in by 0.00001 to hopefully balance and find the ideal correlation of successful recommendations.
+
+Pearsons Correlation formulae is:
+
+ px,y ... = (X-meanx)(Y-meanY).../ Standard Deviations of X Y ...
+
+eg. prefered result is r=0.012
+
+use array from that correlation and list in order from using WR and Total Eucliean Distance.
+This should give the centralised point of the reccommended correlation and therefore a hopefully reasonable job is given, most likely a top 3 list in order 1, Estate Agent 2, Accountant 3, Maths Teacher for example...
