@@ -2,4 +2,4 @@
 
 App made to give varoius recommendations of over 300 jobs based on user inputs and characteristics.
 
-View documentation at https://matthew-harvey.github.io/job_finder/
+View documentation + video at https://matthew-harvey.github.io/job_finder/
